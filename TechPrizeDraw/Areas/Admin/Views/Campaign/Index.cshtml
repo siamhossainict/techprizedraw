@@ -1,0 +1,142 @@
+@model TechPrizeDraw.Models.ViewModels.CampaignSettingsViewModel
+@{
+    ViewData["Title"] = "Campaign Settings";
+}
+
+<div class="mb-4">
+    <h1 class="text-white" style="font-size: 1.8rem;">Campaign Configuration & Governance</h1>
+    <p class="text-secondary mb-0" style="font-size: 0.85rem;">
+        Configure campaign dates, ticket inventory cap, reservation timeouts, and regulatory gates.
+    </p>
+</div>
+
+<div class="card-tech p-4" style="max-width: 850px;">
+    <form asp-area="Admin" asp-controller="Campaign" asp-action="Save" method="post">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
+
+        @if (Model.HasSalesStarted)
+        {
+            <div class="alert alert-warning mb-4" style="background: rgba(245, 158, 11, 0.15); border: 1px solid #F59E0B; color: #F59E0B;">
+                <strong>⚠️ Active Sales Lock:</strong> @Model.SoldTicketsCount tickets have already been issued. Critical structural parameters (Ticket Price, Maximum Capacity, and Ticket Prefix) are locked to maintain audit integrity.
+            </div>
+        }
+
+        <!-- Compliance / Commercial Activation Toggle -->
+        <div class="p-3 rounded mb-4" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3);">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" asp-for="IsEnabled" id="IsEnabled" style="width: 2.5rem; height: 1.3rem; margin-right: 0.75rem;" />
+                <label class="form-check-label text-white" for="IsEnabled" style="font-weight: 700; font-size: 1rem;">
+                    Commercial Live Activation Gate (IsEnabled)
+                </label>
+            </div>
+            <small class="text-secondary d-block mt-2" style="font-size: 0.8rem;">
+                Keep disabled (false) until operator independently confirms compliance with applicable Bangladesh legal/licensing requirements, MFS account terms, consumer protection guidelines, and tax rules.
+            </small>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-8">
+                <label asp-for="Name" class="form-label-tech">Campaign Name *</label>
+                <input asp-for="Name" class="form-control form-tech w-100" required />
+                <span asp-validation-for="Name" class="text-danger" style="font-size: 0.8rem;"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Status" class="form-label-tech">Campaign Lifecycle Status *</label>
+                <select asp-for="Status" class="form-select form-tech" asp-items="Html.GetEnumSelectList<TechPrizeDraw.Models.Enums.CampaignStatus>()"></select>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="TicketPrefix" class="form-label-tech">Ticket Prefix *</label>
+                <input asp-for="TicketPrefix" class="form-control form-tech w-100 font-monospace text-uppercase" readonly="@(Model.HasSalesStarted ? "readonly" : null)" required />
+                <span asp-validation-for="TicketPrefix" class="text-danger" style="font-size: 0.8rem;"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="TicketPrice" class="form-label-tech">Ticket Price (BDT) *</label>
+                <input asp-for="TicketPrice" type="number" step="1" class="form-control form-tech w-100" readonly="@(Model.HasSalesStarted ? "readonly" : null)" required />
+                <span asp-validation-for="TicketPrice" class="text-danger" style="font-size: 0.8rem;"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="MaximumTickets" class="form-label-tech">Maximum Tickets *</label>
+                <input asp-for="MaximumTickets" type="number" class="form-control form-tech w-100" readonly="@(Model.HasSalesStarted ? "readonly" : null)" required />
+                <span asp-validation-for="MaximumTickets" class="text-danger" style="font-size: 0.8rem;"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="StartDate" class="form-label-tech">Campaign Start Date (UTC) *</label>
+                <input asp-for="StartDate" type="datetime-local" value="@Model.StartDate.ToString("yyyy-MM-ddTHH:mm")" class="form-control form-tech w-100" required />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="EndDate" class="form-label-tech">Campaign End Date (UTC) *</label>
+                <input asp-for="EndDate" type="datetime-local" value="@Model.EndDate.ToString("yyyy-MM-ddTHH:mm")" class="form-control form-tech w-100" required />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="DrawDate" class="form-label-tech">Scheduled Draw Date (UTC) *</label>
+                <input asp-for="DrawDate" type="datetime-local" value="@Model.DrawDate.ToString("yyyy-MM-ddTHH:mm")" class="form-control form-tech w-100" required />
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="ReservationTimeoutMinutes" class="form-label-tech">Pending Reservation Timeout (Minutes) *</label>
+                <input asp-for="ReservationTimeoutMinutes" type="number" min="5" max="1440" class="form-control form-tech w-100" required />
+                <small class="text-muted" style="font-size: 0.75rem;">Time before unverified pending checkout orders expire and release inventory.</small>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="SupportContact" class="form-label-tech">Support Contact Email</label>
+                <input asp-for="SupportContact" class="form-control form-tech w-100" />
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="TermsUrl" class="form-label-tech">Terms & Conditions URL</label>
+                <input asp-for="TermsUrl" class="form-control form-tech w-100" />
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="PrivacyPolicyUrl" class="form-label-tech">Privacy Policy URL</label>
+                <input asp-for="PrivacyPolicyUrl" class="form-control form-tech w-100" />
+            </div>
+
+            <div class="col-12">
+                <label asp-for="EligibilityRules" class="form-label-tech">Eligibility Disclosures & Text</label>
+                <textarea asp-for="EligibilityRules" class="form-control form-tech w-100" rows="3"></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-tech-gold btn-lg w-100">
+            Save Campaign Governance Settings
+        </button>
+    </form>
+</div>
+
+<!-- Pre-Deployment Test Data Cleanup Card -->
+<div class="card-tech p-4 mt-5 border border-danger border-opacity-50" style="max-width: 850px; background: rgba(239, 68, 68, 0.04);">
+    <div class="d-flex align-items-center gap-2 mb-2">
+        <span style="font-size: 1.5rem;">🧹</span>
+        <h4 class="text-danger mb-0" style="font-size: 1.25rem;">Pre-Deployment Test Data Cleanup</h4>
+    </div>
+    <p class="text-secondary mb-3" style="font-size: 0.85rem;">
+        Purge all test tickets, vouchers, orders, draws, and customer records before launching to live production.
+        This resets the sequential ticket generator back to <strong>#1</strong> (e.g. <code>TECH-0001</code>) and removes all test transactions.
+    </p>
+
+    <form asp-area="Admin" asp-controller="Campaign" asp-action="ResetTestData" method="post" onsubmit="return confirm('CRITICAL WARNING: This will permanently wipe all tickets, vouchers, orders, draws, and customer data from the database. Are you absolutely certain?');">
+        @Html.AntiForgeryToken()
+        <div class="row g-2 align-items-end">
+            <div class="col-sm-7">
+                <label class="form-label-tech text-danger">Type "CLEAN" to confirm:</label>
+                <input type="text" name="confirmPhrase" class="form-control form-tech w-100 font-monospace text-uppercase" placeholder="Type CLEAN to confirm" required />
+            </div>
+            <div class="col-sm-5">
+                <button type="submit" class="btn btn-danger w-100 py-2">
+                    Purge All Test Data
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

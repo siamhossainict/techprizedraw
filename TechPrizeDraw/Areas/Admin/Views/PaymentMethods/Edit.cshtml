@@ -1,0 +1,56 @@
+@model TechPrizeDraw.Models.Entities.PaymentMethod
+@{
+    ViewData["Title"] = $"Edit Payment Method — {Model.Name}";
+}
+
+<div class="mb-4">
+    <a href="/Admin/PaymentMethods" class="btn btn-outline-secondary btn-sm mb-2">← Back to Payment Methods</a>
+    <h1 class="text-white" style="font-size: 1.8rem;">Edit @Model.Name Account</h1>
+</div>
+
+<div class="card-tech p-4" style="max-width: 600px;">
+    <form asp-area="Admin" asp-controller="PaymentMethods" asp-action="Edit" asp-route-id="@Model.Id" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label-tech">Display Name *</label>
+            <input asp-for="Name" class="form-control form-tech w-100" required />
+            <span asp-validation-for="Name" class="text-danger" style="font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Provider" class="form-label-tech">Provider Type *</label>
+            <select asp-for="Provider" class="form-select form-tech" asp-items="Html.GetEnumSelectList<TechPrizeDraw.Models.Enums.PaymentProvider>()"></select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="AccountNumber" class="form-label-tech">Official Account Number *</label>
+            <input asp-for="AccountNumber" class="form-control form-tech w-100 font-monospace" required />
+            <span asp-validation-for="AccountNumber" class="text-danger" style="font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Instructions" class="form-label-tech">Customer Instructions</label>
+            <textarea asp-for="Instructions" class="form-control form-tech w-100" rows="3"></textarea>
+            <span asp-validation-for="Instructions" class="text-danger" style="font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6">
+                <label asp-for="DisplayOrder" class="form-label-tech">Display Priority</label>
+                <input asp-for="DisplayOrder" type="number" class="form-control form-tech w-100" />
+            </div>
+            <div class="col-sm-6 d-flex align-items-center mt-4">
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsActive" class="form-check-label text-white">Active in Checkout</label>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-tech-gold w-100">
+            Save Payment Method Changes
+        </button>
+    </form>
+</div>

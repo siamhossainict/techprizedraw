@@ -1,0 +1,319 @@
+@model TechPrizeDraw.Models.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Your Chance. Your Ticket.";
+}
+
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container">
+        <div class="hero-tag">
+            <span class="pulse-dot"></span>
+            <span>OFFICIAL CAMPAIGN &bull; LIMITED TO 5,000 TICKETS</span>
+        </div>
+
+        <h1 class="hero-title">
+            YOUR CHANCE.<br />
+            <span class="highlight-gold">YOUR TICKET.</span>
+        </h1>
+
+        <p class="hero-subtitle mx-auto">
+            Participate in Bangladesh's most transparent technology prize draw. Enter for only <strong>৳50 BDT</strong> for an audited chance to win a high-performance laptop, professional audio interface, or acoustic guitar.
+        </p>
+
+        <!-- Dynamic Live Ticket Counter Widget -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-8 col-xl-7">
+                <div class="inventory-widget text-start">
+                    <div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-2">
+                        <div>
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Live Inventory Counter</span>
+                            <div class="inventory-counter-value">
+                                ONLY <span class="live-remaining-count" style="color: var(--accent-gold);">@Model.Inventory.Remaining.ToString("N0")</span> TICKETS LEFT
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-dark border border-info text-info px-3 py-2" style="font-size: 0.85rem;">
+                                ৳@Model.Campaign.TicketPrice.ToString("N0") BDT / Entry
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Visual Progress Bar -->
+                    <div class="inventory-progress-bar">
+                        @{
+                            decimal approvedPct = Model.Inventory.Total > 0 ? ((decimal)Model.Inventory.Approved / Model.Inventory.Total) * 100m : 0m;
+                            decimal pendingPct = Model.Inventory.Total > 0 ? ((decimal)Model.Inventory.Pending / Model.Inventory.Total) * 100m : 0m;
+                        }
+                        <div class="inventory-progress-fill live-progress-fill" style="width: @approvedPct.ToString("F1")%;"></div>
+                        <div class="inventory-progress-pending live-progress-pending" style="left: @approvedPct.ToString("F1")%; width: @pendingPct.ToString("F1")%;"></div>
+                    </div>
+
+                    <div class="d-flex justify-content-between text-secondary" style="font-size: 0.8rem; font-weight: 600;">
+                        <div>
+                            <span style="color: #10B981;">●</span> <span class="live-approved-count text-white">@Model.Inventory.Approved</span> Approved / Valid
+                        </div>
+                        <div>
+                            <span style="color: #00D2FF;">●</span> <span class="live-pending-count text-white">@Model.Inventory.Pending</span> Under Verification
+                        </div>
+                        <div>
+                            Total Limit: <span class="text-white">@Model.Inventory.Total.ToString("N0")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action CTAs -->
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a asp-controller="Checkout" asp-action="Index" class="btn-tech-gold btn-lg">
+                <span>⚡ GET YOUR TICKET (৳50)</span>
+            </a>
+            <a href="#prizes" class="btn-tech-outline btn-lg">
+                <span>VIEW PRIZES</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="how-it-works" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span style="color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Step-by-Step Experience</span>
+            <h2 class="mt-2" style="font-size: 2.2rem;">How The Prize Draw Works</h2>
+            <p class="text-secondary mx-auto" style="max-width: 550px;">
+                Simple, safe, and completely transparent. No automatic credit card charges.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <h4 style="font-size: 1.15rem; color: #ffffff;">Choose Your Ticket</h4>
+                    <p class="text-secondary" style="font-size: 0.9rem;">
+                        Click Get Your Ticket, enter your basic contact details (Name, Bangladesh mobile, email), and initiate your reservation.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <h4 style="font-size: 1.15rem; color: #ffffff;">Send ৳50 via MFS</h4>
+                    <p class="text-secondary" style="font-size: 0.9rem;">
+                        Use your personal <strong>bKash</strong> or <strong>Nagad</strong> app to "Send Money" (৳50 BDT) to our official campaign number.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <h4 style="font-size: 1.15rem; color: #ffffff;">Submit TrxID</h4>
+                    <p class="text-secondary" style="font-size: 0.9rem;">
+                        Copy the Transaction ID generated by your mobile financial service and submit it in the checkout verification form.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="step-card">
+                    <div class="step-number">04</div>
+                    <h4 style="font-size: 1.15rem; color: #ffffff;">Get Verified Voucher</h4>
+                    <p class="text-secondary" style="font-size: 0.9rem;">
+                        After manual administrator verification, your unique sequential ticket (e.g., <strong>TECH-0001</strong>) and QR code are issued to your email.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Prize Showcase Section -->
+<section id="prizes" class="py-5" style="background: rgba(10, 18, 42, 0.5);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span style="color: var(--accent-gold); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Exclusive Rewards</span>
+            <h2 class="mt-2" style="font-size: 2.2rem;">Featured Technology Prizes</h2>
+            <p class="text-secondary mx-auto" style="max-width: 580px;">
+                Three high-tier tech rewards designed for developers, producers, musicians, and creators in Bangladesh.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            @if (Model.Prizes != null && Model.Prizes.Any())
+            {
+                foreach (var prize in Model.Prizes)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="prize-card">
+                            <div class="prize-image-wrap">
+                                <span class="prize-badge">@prize.Title</span>
+                                <img src="@prize.ImageUrl" alt="@prize.Name" loading="lazy" />
+                            </div>
+                            <div class="prize-body">
+                                <h3 style="font-size: 1.35rem; color: #ffffff; margin-bottom: 0.5rem;">@prize.Name</h3>
+                                <p class="text-secondary" style="font-size: 0.9rem; flex-grow: 1;">@prize.Description</p>
+                                @if (!string.IsNullOrWhiteSpace(prize.Specifications))
+                                {
+                                    <div class="p-2 mb-3 rounded" style="background: rgba(255, 255, 255, 0.04); font-size: 0.8rem; color: var(--accent-cyan);">
+                                        <strong>Specs:</strong> @prize.Specifications
+                                    </div>
+                                }
+                                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-25">
+                                    <span class="text-muted" style="font-size: 0.8rem;">Est. Value:</span>
+                                    <span style="color: var(--accent-gold); font-weight: 700; font-size: 1.05rem;">৳@prize.EstimatedValue.ToString("N0") BDT</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Payment Instructions Section -->
+<section id="payment-guide" class="py-5">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span style="color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Manual MFS Verification</span>
+                <h2 class="mt-2 mb-3" style="font-size: 2.2rem;">Direct Mobile Financial Payment</h2>
+                <p class="text-secondary">
+                    To ensure security and bypass risky third-party payment gateways, participants send money directly to our designated official accounts.
+                </p>
+                <div class="d-flex flex-column gap-3 mt-4">
+                    <div class="d-flex gap-3">
+                        <div style="background: rgba(0, 210, 255, 0.1); color: var(--accent-cyan); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
+                        <div>
+                            <strong style="color: #ffffff;">Always Choose "Send Money"</strong>
+                            <p class="text-secondary mb-0" style="font-size: 0.85rem;">Send exactly ৳50 BDT from your own personal bKash or Nagad wallet.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <div style="background: rgba(0, 210, 255, 0.1); color: var(--accent-cyan); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
+                        <div>
+                            <strong style="color: #ffffff;">Copy & Save Transaction ID</strong>
+                            <p class="text-secondary mb-0" style="font-size: 0.85rem;">Your SMS receipt contains an alphanumeric transaction ID (TrxID/TxnID).</p>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <div style="background: rgba(0, 210, 255, 0.1); color: var(--accent-cyan); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
+                        <div>
+                            <strong style="color: #ffffff;">Admin Review Process</strong>
+                            <p class="text-secondary mb-0" style="font-size: 0.85rem;">Our staff checks transaction logs before generating and emailing your verified ticket voucher.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card-tech p-4">
+                    <h4 class="mb-3" style="color: #ffffff; font-size: 1.2rem;">Official Payment Numbers</h4>
+                    <p class="text-secondary" style="font-size: 0.85rem;">
+                        Use one of the numbers below to send ৳50. Click copy for ease of use in your mobile app:
+                    </p>
+
+                    <div class="d-flex flex-column gap-3 mt-3">
+                        @foreach (var pm in Model.PaymentMethods)
+                        {
+                            <div class="p-3 rounded" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle);">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="badge @(pm.Name.ToLower().Contains("bkash") ? "bg-danger" : "bg-warning text-dark")" style="font-size: 0.75rem;">
+                                        @pm.Name
+                                    </span>
+                                    <button type="button" class="btn-copy" data-copy="@pm.AccountNumber">
+                                        Copy Number
+                                    </button>
+                                </div>
+                                <div style="font-family: 'Poppins', monospace; font-size: 1.3rem; font-weight: 700; color: #ffffff; letter-spacing: 1px;">
+                                    @pm.AccountNumber
+                                </div>
+                                <small class="text-secondary" style="font-size: 0.8rem;">@pm.Instructions</small>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top border-secondary border-opacity-25 text-center">
+                        <a asp-controller="Checkout" asp-action="Index" class="btn-tech-gold w-100">
+                            Proceed To Checkout Form →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trust, Transparency & Audit Section -->
+<section class="py-5" style="background: rgba(10, 18, 42, 0.6);">
+    <div class="container">
+        <div class="card-tech card-tech-gold p-4 p-md-5">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <span style="color: var(--accent-gold); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Integrity Guarantee</span>
+                    <h3 class="mt-2 mb-3" style="font-size: 1.8rem; color: #ffffff;">Cryptographically Audited Draw Execution</h3>
+                    <p class="text-secondary mb-3" style="font-size: 0.95rem;">
+                        Our prize draw engine operates on a strictly immutable database policy. Winning tickets are selected using hardware-grade pseudorandom number generators (<code style="color: var(--accent-cyan);">RandomNumberGenerator</code>). Every step—from initial order reservation to final winner proclamation—is immutably audited.
+                    </p>
+                    <div class="d-flex gap-4 flex-wrap text-white" style="font-size: 0.85rem;">
+                        <div>✓ Strict 5,000 Cap (Zero Overselling)</div>
+                        <div>✓ Sequential Non-Reversible Numbers</div>
+                        <div>✓ Public Instant QR Verification</div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <a asp-controller="Draw" asp-action="Winners" class="btn-tech-outline btn-lg w-100">
+                        View Winners Portal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Frequently Asked Questions -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 style="font-size: 2rem;">Frequently Asked Questions</h2>
+            <p class="text-secondary">Key details regarding participation, payments, and ticket issuance.</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <div class="card-tech mb-3 p-3">
+                        <h5 class="text-white mb-2" style="font-size: 1.05rem;">When will I receive my ticket after sending money?</h5>
+                        <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+                            Your ticket is issued immediately after our administrator verifies your transaction on our official MFS statement. Verification typically takes between 15 minutes to a few hours during business operating hours.
+                        </p>
+                    </div>
+
+                    <div class="card-tech mb-3 p-3">
+                        <h5 class="text-white mb-2" style="font-size: 1.05rem;">Is my ticket valid as soon as I submit the checkout form?</h5>
+                        <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+                            <strong>No.</strong> Submitting the transaction ID creates a temporary pending reservation. The ticket becomes officially <strong>VALID</strong> and eligible for the prize draw only after manual admin approval.
+                        </p>
+                    </div>
+
+                    <div class="card-tech mb-3 p-3">
+                        <h5 class="text-white mb-2" style="font-size: 1.05rem;">How can I verify the authenticity of my ticket?</h5>
+                        <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+                            Every issued ticket features a unique QR code and sequential number (e.g. TECH-0001). Scan the QR code or enter your ticket number on our <a href="/ticket/verify">Public Ticket Verification page</a> to view its live database status.
+                        </p>
+                    </div>
+
+                    <div class="card-tech mb-3 p-3">
+                        <h5 class="text-white mb-2" style="font-size: 1.05rem;">What happens if the 5,000 ticket limit is reached?</h5>
+                        <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+                            The platform automatically locks checkout and displays a <strong>SOLD OUT</strong> status. The system's concurrency-controlled database transactions guarantee that no more than 5,000 valid tickets can ever be issued.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

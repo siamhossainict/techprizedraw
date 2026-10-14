@@ -1,0 +1,108 @@
+@model TechPrizeDraw.Models.DTOs.TicketVerificationResult
+@{
+    ViewData["Title"] = "Public Ticket Verification";
+    string searchTicket = ViewBag.SearchTicket as string ?? string.Empty;
+}
+
+<div class="container py-5" style="max-width: 750px;">
+    <div class="text-center mb-4">
+        <span class="hero-tag">
+            <span>🛡️ OFFICIAL VERIFICATION REGISTRY</span>
+        </span>
+        <h1 class="text-white mt-2" style="font-size: 2.2rem;">Verify Ticket Authenticity</h1>
+        <p class="text-secondary mx-auto" style="max-width: 500px;">
+            Check real-time database validity and prize draw eligibility for any issued TECH ticket voucher.
+        </p>
+
+        <!-- Search Input Bar -->
+        <form method="get" action="/ticket/verify" class="mt-4">
+            <div class="input-group mb-3" style="max-width: 500px; margin: 0 auto;">
+                <input type="text" name="ticketNumber" value="@searchTicket" class="form-control form-tech" style="font-family: monospace; font-size: 1.1rem; text-transform: uppercase;" placeholder="Enter Ticket Number (e.g. TECH-0001)" required />
+                <button class="btn btn-tech-gold px-4" type="submit">Verify</button>
+            </div>
+        </form>
+    </div>
+
+    @if (Model != null)
+    {
+        <div class="card-tech p-4 p-md-5 mt-4 text-center">
+            @if (Model.IsValid)
+            {
+                <div class="mb-3">
+                    <div style="width: 70px; height: 70px; background: rgba(16, 185, 129, 0.15); border: 2px solid #10B981; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 2rem; color: #10B981;">
+                        ✓
+                    </div>
+                </div>
+
+                <span class="badge-status badge-status-valid mb-3" style="font-size: 1rem; padding: 0.5rem 1.5rem;">
+                    STATUS: VALID & ELIGIBLE
+                </span>
+
+                <div class="font-monospace mb-3" style="font-size: 2.5rem; font-weight: 800; color: var(--accent-gold); letter-spacing: 2px;">
+                    @Model.TicketNumber
+                </div>
+
+                <div class="p-4 rounded text-start mb-4" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle);">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Campaign</span>
+                            <strong class="text-white">@Model.CampaignName</strong>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Scheduled Draw Date</span>
+                            <strong class="text-info">@(Model.DrawDate?.ToString("MMMM dd, yyyy") ?? "To Be Announced")</strong>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Registered Participant</span>
+                            <strong class="text-white">@Model.MaskedCustomerName</strong>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Date of Verification</span>
+                            <span class="text-secondary">@(Model.IssuedAt?.ToString("MMM dd, yyyy") ?? "N/A")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded mb-4" style="background: rgba(16, 185, 129, 0.08); border-left: 4px solid #10B981; text-align: left;">
+                    <p class="mb-0 text-white" style="font-size: 0.95rem;">
+                        <strong>Eligibility Confirmed:</strong> @Model.DrawEligibilityMessage
+                    </p>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="/ticket/@Model.TicketNumber/voucher" class="btn-tech-gold">
+                        View Official Ticket Voucher →
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="mb-3">
+                    <div style="width: 70px; height: 70px; background: rgba(239, 68, 68, 0.15); border: 2px solid #EF4444; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 2rem; color: #EF4444;">
+                        ✕
+                    </div>
+                </div>
+
+                <span class="badge-status badge-status-rejected mb-3" style="font-size: 1rem; padding: 0.5rem 1.5rem;">
+                    @Model.Status
+                </span>
+
+                <h3 class="text-white mb-2">Ticket Cannot Be Verified</h3>
+                <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                    @Model.Message
+                </p>
+
+                <div class="p-3 rounded mb-4 text-start" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #EF4444;">
+                    <small class="text-secondary">
+                        Tickets are only issued after administrator verification of payment. If you recently submitted your checkout form, your ticket may still be under review.
+                    </small>
+                </div>
+
+                <a href="/" class="btn-tech-outline">Return to Homepage</a>
+            }
+        </div>
+    }
+</div>

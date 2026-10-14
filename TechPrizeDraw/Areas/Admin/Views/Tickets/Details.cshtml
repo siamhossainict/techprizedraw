@@ -1,0 +1,101 @@
+@model TechPrizeDraw.Models.Entities.Ticket
+@{
+    ViewData["Title"] = $"Ticket Details — {Model.TicketNumber}";
+}
+
+<div class="mb-4">
+    <a href="/Admin/Tickets" class="btn btn-outline-secondary btn-sm mb-2">← Back to Ticket Registry</a>
+    <h1 class="text-white" style="font-size: 1.8rem;">Ticket @Model.TicketNumber</h1>
+    <span class="badge-status @(Model.Status == TicketStatus.Valid ? "badge-status-valid" : "badge-status-winner")">
+        STATUS: @Model.Status
+    </span>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card-tech p-4 mb-4">
+            <h5 class="text-white mb-3">Ticket Specification</h5>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Ticket Number</span>
+                    <strong style="color: var(--accent-gold); font-size: 1.5rem; letter-spacing: 1px;">@Model.TicketNumber</strong>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Sequence Number</span>
+                    <strong class="text-white font-monospace" style="font-size: 1.2rem;">#@Model.SequenceNumber</strong>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Issued At</span>
+                    <span class="text-secondary">@Model.IssuedAt.ToString("yyyy-MM-dd HH:mm:ss") UTC</span>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Linked Order Number</span>
+                    <a href="/Admin/Orders/Details/@Model.OrderId" class="text-info font-monospace text-decoration-none">
+                        @Model.Order?.OrderNumber
+                    </a>
+                </div>
+                <div class="col-12">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Cryptographic Verification Token</span>
+                    <code class="text-cyan font-monospace" style="font-size: 0.85rem;">@Model.QrVerificationCode</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-tech p-4">
+            <h5 class="text-white mb-3">Customer Information</h5>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Customer Name</span>
+                    <strong class="text-white">@Model.Customer?.FullName</strong>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Mobile Number</span>
+                    <span class="text-white font-monospace">@Model.Customer?.MobileNumber</span>
+                </div>
+                <div class="col-12">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Email Address</span>
+                    <span class="text-white">@Model.Customer?.Email</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Actions Box -->
+        <div class="card-tech p-4 mb-4">
+            <h5 class="text-white mb-3">Administrative Actions</h5>
+            
+            <a href="/ticket/@Model.TicketNumber/voucher" target="_blank" class="btn btn-tech-outline w-100 mb-3">
+                🖨️ Open Official Digital Voucher
+            </a>
+
+            <!-- Resend Email Form -->
+            <form asp-area="Admin" asp-controller="Tickets" asp-action="ResendEmail" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-outline-info w-100" onclick="return confirm('Resend ticket email to @Model.Customer?.Email?');">
+                    ✉️ Resend Ticket Voucher Email
+                </button>
+            </form>
+            <small class="text-muted d-block mt-2 mb-3" style="font-size: 0.75rem;">
+                Ticket remains valid even if SMTP server has transient delays.
+            </small>
+
+            @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+            {
+                <div class="pt-3 border-top border-secondary border-opacity-25">
+                    <form asp-area="Admin" asp-controller="Tickets" asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete ticket @Model.TicketNumber and revoke its entry voucher? This cannot be undone.');">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="deleteLinkedOrder" value="true" />
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            🗑️ Delete Ticket & Revoke Voucher
+                        </button>
+                    </form>
+                    <small class="text-secondary d-block mt-1" style="font-size: 0.75rem;">
+                        Permanently deletes the ticket record, revokes digital voucher, and removes test association.
+                    </small>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,159 @@
+@model TechPrizeDraw.Models.Entities.Order
+@{
+    ViewData["Title"] = $"Order Details — #{Model.OrderNumber}";
+}
+
+<div class="mb-4">
+    <a href="/Admin/Orders" class="btn btn-outline-secondary btn-sm mb-2">← Back to Orders</a>
+    <h1 class="text-white" style="font-size: 1.8rem;">Order #@Model.OrderNumber</h1>
+    <span class="badge-status @(Model.Status == OrderStatus.Approved ? "badge-status-approved" : Model.Status == OrderStatus.PendingVerification ? "badge-status-pending" : "badge-status-rejected")">
+        @Model.Status
+    </span>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card-tech p-4 mb-4">
+            <h5 class="text-white mb-3">Order Information</h5>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Order Number</span>
+                    <strong class="text-info font-monospace">@Model.OrderNumber</strong>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Amount</span>
+                    <strong style="color: var(--accent-gold); font-size: 1.1rem;">৳@Model.Amount.ToString("N0") BDT</strong>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Payment Method</span>
+                    <strong class="text-white">@Model.PaymentMethod?.Name</strong>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Payment Account</span>
+                    <span class="text-white font-monospace">@Model.PaymentMethod?.AccountNumber</span>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Transaction ID</span>
+                    <strong class="text-warning font-monospace" style="font-size: 1.1rem;">@Model.TransactionId</strong>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Customer IP Address</span>
+                    <span class="text-secondary font-monospace">@(Model.CustomerIpAddress ?? "Unknown")</span>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Created At</span>
+                    <span class="text-secondary">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss") UTC</span>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Reservation Hold Expired</span>
+                    <span class="text-secondary">@Model.ReservationExpiresAt.ToString("yyyy-MM-dd HH:mm:ss") UTC</span>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.AdminNote) || !string.IsNullOrWhiteSpace(Model.RejectionReason))
+        {
+            <div class="card-tech p-4 mb-4">
+                <h5 class="text-white mb-2">Administrative Verification Notes</h5>
+                @if (!string.IsNullOrWhiteSpace(Model.RejectionReason))
+                {
+                    <p class="text-danger mb-1"><strong>Reason:</strong> @Model.RejectionReason</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.AdminNote))
+                {
+                    <p class="text-secondary mb-0"><strong>Note:</strong> @Model.AdminNote</p>
+                }
+                <div class="text-muted mt-2" style="font-size: 0.8rem;">
+                    Updated by: @(Model.ApprovedBy ?? Model.RejectedBy ?? "Admin") on @(Model.ApprovedAt ?? Model.RejectedAt)?.ToString("yyyy-MM-dd HH:mm") UTC
+                </div>
+            </div>
+        }
+
+        <!-- Associated Email Logs -->
+        <div class="card-tech p-4">
+            <h5 class="text-white mb-3">Email Logs for this Order</h5>
+            @if (Model.EmailLogs != null && Model.EmailLogs.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table-tech" style="font-size: 0.85rem;">
+                        <thead>
+                            <tr>
+                                <th>Template</th>
+                                <th>Recipient</th>
+                                <th>Status</th>
+                                <th>Sent At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var log in Model.EmailLogs)
+                            {
+                                <tr>
+                                    <td class="text-white">@log.TemplateName</td>
+                                    <td class="text-secondary">@log.RecipientEmail</td>
+                                    <td>
+                                        <span class="badge @(log.Status == EmailStatus.Sent ? "bg-success" : "bg-danger")">
+                                            @log.Status
+                                        </span>
+                                    </td>
+                                    <td class="text-secondary">@log.SentAt?.ToString("yyyy-MM-dd HH:mm")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mb-0">No email records for this order.</p>
+            }
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Participant Card -->
+        <div class="card-tech p-4 mb-4">
+            <h5 class="text-white mb-3">Participant</h5>
+            <div class="mb-2">
+                <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Name</span>
+                <strong class="text-white">@Model.Customer?.FullName</strong>
+            </div>
+            <div class="mb-2">
+                <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Mobile Number</span>
+                <span class="text-white font-monospace">@Model.Customer?.MobileNumber</span>
+            </div>
+            <div class="mb-0">
+                <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Email</span>
+                <span class="text-white">@Model.Customer?.Email</span>
+            </div>
+        </div>
+
+        <!-- Associated Ticket Card -->
+        @if (Model.Ticket != null)
+        {
+            <div class="card-tech p-4 text-center">
+                <span class="badge-status badge-status-valid mb-2">VALID TICKET</span>
+                <div style="font-family: 'Poppins', monospace; font-size: 2rem; font-weight: 800; color: var(--accent-gold);">
+                    @Model.Ticket.TicketNumber
+                </div>
+                <small class="text-secondary d-block mt-1">Sequence #@Model.Ticket.SequenceNumber of 5000</small>
+                <div class="mt-3">
+                    <a href="/ticket/@Model.Ticket.TicketNumber/voucher" target="_blank" class="btn btn-tech-outline btn-sm w-100">
+                        View Digital Voucher →
+                    </a>
+                </div>
+            </div>
+        }
+
+        @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+        {
+            <div class="card-tech p-3 mt-4">
+                <form asp-area="Admin" asp-controller="Orders" asp-action="Delete" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete order @Model.OrderNumber and linked records?');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-danger w-100 btn-sm">
+                        🗑️ Delete Order & Linked Records
+                    </button>
+                </form>
+            </div>
+        }
+    </div>
+</div>

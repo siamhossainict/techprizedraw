@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Campaign Rules & Legal Notice";
+}
+
+<div class="container py-5" style="max-width: 850px;">
+    <div class="card-tech p-4 p-md-5">
+        <h1 class="mb-4" style="color: #ffffff; font-size: 2.2rem;">Campaign Rules & Verification Protocol</h1>
+
+        <div class="compliance-banner mb-4">
+            <strong>Mandatory Compliance Notice:</strong> This software architecture enforces clear separation between technical execution and legal authorization. The operator must secure necessary permits, commercial MFS agreements, and compliance clearance under Bangladesh law before live public activation.
+        </div>
+
+        <h4 class="text-white mt-4">RULE 1: Total Ticket Cap</h4>
+        <p class="text-secondary" style="font-size: 0.95rem;">
+            The system strictly enforces a maximum cap of <strong>5,000 valid tickets</strong>. The database uses transactional serializable constraints to prevent overselling.
+        </p>
+
+        <h4 class="text-white mt-4">RULE 2: Fixed Ticket Price</h4>
+        <p class="text-secondary" style="font-size: 0.95rem;">
+            Each ticket is priced uniformly at <strong>৳50 BDT</strong>. No bulk discounts or price variations are permitted.
+        </p>
+
+        <h4 class="text-white mt-4">RULE 3: Manual Payment Verification</h4>
+        <p class="text-secondary" style="font-size: 0.95rem;">
+            Customer Submission ≠ Payment Approval. Submitting a transaction ID reserves a slot temporarily. The ticket is issued <strong>ONLY AFTER</strong> human administrator verification against official MFS statements.
+        </p>
+
+        <h4 class="text-white mt-4">RULE 4: Unique Sequential Ticket Numbering</h4>
+        <p class="text-secondary" style="font-size: 0.95rem;">
+            Valid tickets are generated sequentially in the format <code>TECH-0001</code> to <code>TECH-5000</code>. Number assignment is deterministic, non-reversible, and occurs only upon administrative approval.
+        </p>
+
+        <h4 class="text-white mt-4">RULE 5: Cryptographic Random Draw</h4>
+        <p class="text-secondary" style="font-size: 0.95rem;">
+            Winning tickets are selected using hardware-grade pseudorandom number generators (<code style="color: var(--accent-cyan);">RandomNumberGenerator</code>). JavaScript <code>Math.random()</code> is strictly prohibited. Draw results are recorded with audit logs and are permanently immutable.
+        </p>
+    </div>
+</div>

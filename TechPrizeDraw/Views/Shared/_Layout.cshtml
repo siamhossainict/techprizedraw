@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] != null ? $"{ViewData["Title"]} — " : "")TECH Prize Draw</title>
+    <meta name="description" content="Exclusive limited 5,000 ticket technology prize draw in Bangladesh. Enter for ৳50 BDT to win a premium laptop, studio audio interface, or acoustic guitar." />
+    
+    <!-- Open Graph / Meta -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="TECH Prize Draw — Your Chance. Your Ticket." />
+    <meta property="og:description" content="Limited 5,000 ticket tech prize draw. Verified manually via bKash and Nagad." />
+    <meta property="og:site_name" content="TECH Prize Draw" />
+
+    <!-- Google Fonts: Inter & Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS Grid Utilities -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <!-- Custom Theme & Site CSS -->
+    <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        /* Force vertical scrollbar and prevent any browser-level scroll suppression */
+        html {
+            overflow-y: scroll !important;
+            overflow-x: hidden !important;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #00D2FF #060B18;
+        }
+
+        body {
+            overflow-x: hidden !important;
+            overflow-y: visible !important;
+            min-height: 100vh;
+        }
+
+        /* Explicit, always-visible Webkit scrollbars for Chrome, Edge, Brave, Opera */
+        ::-webkit-scrollbar {
+            width: 12px !important;
+            height: 12px !important;
+            display: block !important;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #060B18 !important;
+            border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #00D2FF 0%, #0A58CA 100%) !important;
+            border-radius: 6px !important;
+            border: 2px solid #060B18 !important;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #F5C842 0%, #E5A93C 100%) !important;
+        }
+
+        /* Floating Quick Scroll Button */
+        .floating-scroll-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 999;
+            background: rgba(14, 26, 61, 0.95);
+            border: 1px solid #00D2FF;
+            color: #ffffff;
+            border-radius: 50px;
+            padding: 0.65rem 1.25rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 210, 255, 0.35);
+            transition: all 0.25s ease;
+            backdrop-filter: blur(8px);
+            user-select: none;
+        }
+
+        .floating-scroll-btn:hover {
+            background: linear-gradient(135deg, #00D2FF, #0090B3);
+            color: #060B18;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px -5px rgba(0, 210, 255, 0.6);
+        }
+    </style>
+</head>
+<body class="atmospheric-bg">
+
+    <!-- Navigation -->
+    <header>
+        <nav class="tech-navbar">
+            <div class="container d-flex justify-content-between align-items-center">
+                <a class="tech-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <span style="color: #00D2FF;">⚡</span> TECH <span class="badge-tech">DRAW</span>
+                </a>
+
+                <div class="d-none d-lg-flex align-items-center gap-1">
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    <a class="nav-link" href="/#prizes">Prizes</a>
+                    <a class="nav-link" href="/#how-it-works">How It Works</a>
+                    <a class="nav-link" href="/#payment-guide">Payment Guide</a>
+                    <a class="nav-link" asp-area="" asp-controller="Ticket" asp-action="Verify">Verify Ticket</a>
+                    <a class="nav-link" asp-area="" asp-controller="Draw" asp-action="Winners">Winners</a>
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Rules">Rules</a>
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <a class="btn-tech-gold btn-sm" asp-area="" asp-controller="Checkout" asp-action="Index">
+                        Get Ticket <span style="font-size: 0.85em; opacity: 0.9;">(৳50)</span>
+                    </a>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a class="btn-tech-outline btn-sm ms-2" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                            Admin Portal
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn-tech-outline btn-sm ms-1 d-none d-sm-inline-flex" asp-area="Admin" asp-controller="Account" asp-action="Login">
+                            Staff Login
+                        </a>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Global Compliance / Test Mode Banner -->
+    <div class="container mt-3">
+        <div class="compliance-banner d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <strong>⚠️ Regulatory & Test Mode Notice:</strong> This technology platform is configured in non-commercial test mode. Live commercial activation requires operator verification of Bangladesh legal licensing, MFS merchant terms, and tax regulations.
+            </div>
+            <a href="/Home/Rules" class="text-white text-decoration-underline" style="font-size: 0.85rem;">Review Rules & Disclosures →</a>
+        </div>
+    </div>
+
+    <!-- Main Content Body -->
+    <main role="main" class="pb-5">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    @if (ViewData["HideFooter"] as bool? != true)
+    {
+    <footer class="tech-footer" style="background: #040814; border-top: 1px solid var(--border-subtle); padding: 4rem 0 2rem; margin-top: 5rem;">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4">
+                    <div class="tech-brand mb-3">
+                        <span style="color: #00D2FF;">⚡</span> TECH <span class="badge-tech">PRIZE DRAW</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 320px;">
+                        Bangladesh's premier limited-edition technology prize draw. 5,000 maximum entries, manual mobile financial service verification, and cryptographic transparency.
+                    </p>
+                    <div class="d-flex gap-3 mt-3">
+                        <span class="badge bg-dark border border-secondary text-info">bKash Verified</span>
+                        <span class="badge bg-dark border border-secondary text-warning">Nagad Verified</span>
+                    </div>
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <h5 style="color: #ffffff; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem;">Platform</h5>
+                    <ul class="list-unstyled" style="font-size: 0.9rem;">
+                        <li class="mb-2"><a href="/#prizes" class="text-secondary text-decoration-none">Prize Showcase</a></li>
+                        <li class="mb-2"><a href="/#how-it-works" class="text-secondary text-decoration-none">How It Works</a></li>
+                        <li class="mb-2"><a asp-controller="Checkout" asp-action="Index" class="text-secondary text-decoration-none">Purchase Ticket</a></li>
+                        <li class="mb-2"><a asp-controller="Ticket" asp-action="Verify" class="text-secondary text-decoration-none">Verify Ticket</a></li>
+                        <li class="mb-2"><a asp-controller="Draw" asp-action="Winners" class="text-secondary text-decoration-none">Winners Portal</a></li>
+                        <li class="mb-2"><a asp-controller="Home" asp-action="Contact" class="text-secondary text-decoration-none">Contact Support</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <h5 style="color: #ffffff; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem;">Compliance</h5>
+                    <ul class="list-unstyled" style="font-size: 0.9rem;">
+                        <li class="mb-2"><a asp-controller="Home" asp-action="Rules" class="text-secondary text-decoration-none">Campaign Rules</a></li>
+                        <li class="mb-2"><a asp-controller="Home" asp-action="Terms" class="text-secondary text-decoration-none">Terms & Conditions</a></li>
+                        <li class="mb-2"><a asp-controller="Home" asp-action="Privacy" class="text-secondary text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a asp-area="Admin" asp-controller="Account" asp-action="Login" class="text-secondary text-decoration-none">Staff Portal</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-4">
+                    <h5 style="color: #ffffff; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem;">Verification & Support</h5>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem;">
+                        All payments are manually verified against official MFS merchant statements before ticket vouchers are issued. For verification inquiries or payment adjustments:
+                    </p>
+                    <p class="mb-1" style="font-size: 0.88rem;">
+                        <span class="text-secondary">Email:</span>
+                        <a href="mailto:techprizedraw@inbox.eu" class="text-decoration-none ms-1" style="color: var(--accent-cyan); font-weight: 600;">techprizedraw@inbox.eu</a>
+                    </p>
+                    <p class="mb-2" style="font-size: 0.88rem;">
+                        <span class="text-secondary">WhatsApp:</span>
+                        <a href="https://wa.me/8801879732435?text=Hello%20TECH%20Prize%20Draw%20Support" target="_blank" rel="noopener noreferrer" class="text-decoration-none ms-1" style="color: #25D366; font-weight: 600;">Chat on WhatsApp →</a>
+                    </p>
+                    <small style="color: var(--text-muted);">Dhaka, Bangladesh</small>
+                </div>
+            </div>
+
+            <div class="pt-4 border-top border-secondary border-opacity-25 d-flex flex-column flex-md-row justify-content-between align-items-center gap-3" style="font-size: 0.8rem; color: var(--text-muted);">
+                <div>
+                    &copy; 2026 TECH Prize Draw. All rights reserved. Built for Bangladesh.
+                </div>
+                <div>
+                    Sequential Ticket Series: TECH-0001 to TECH-5000 | Max 5,000 Entries
+                </div>
+            </div>
+        </div>
+    </footer>
+    }
+
+    <!-- Floating Quick Scroll Action Button -->
+    <button id="floatingScrollBtn" class="floating-scroll-btn" type="button" aria-label="Quick scroll helper" title="Scroll to bottom">
+        <span id="scrollBtnIcon" style="font-size: 1.1rem; line-height: 1;">↓</span>
+        <span id="scrollBtnText">Scroll to Bottom</span>
+    </button>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-tech-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,77 @@
+@model TechPrizeDraw.Models.ViewModels.OrderConfirmationViewModel
+@{
+    ViewData["Title"] = "Payment Information Received — Under Verification";
+}
+
+<div class="container py-5" style="max-width: 750px;">
+    <div class="card-tech p-4 p-md-5 text-center">
+        <!-- Verification Status Icon -->
+        <div class="mb-4">
+            <div style="width: 80px; height: 80px; background: rgba(245, 158, 11, 0.15); border: 2px solid var(--accent-gold); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--accent-gold);">
+                ⏳
+            </div>
+        </div>
+
+        <span class="badge-status badge-status-pending mb-2" style="font-size: 0.9rem; padding: 0.5rem 1.25rem;">
+            STATUS: PENDING VERIFICATION
+        </span>
+
+        <h1 class="text-white mt-3 mb-2" style="font-size: 2rem;">PAYMENT INFORMATION RECEIVED</h1>
+        <p class="text-secondary mx-auto mb-4" style="max-width: 520px; font-size: 1rem;">
+            Thank you, <strong>@Model.CustomerName</strong>. Your payment submission has been securely recorded and queued for manual administrator review.
+        </p>
+
+        <!-- Order Summary Card -->
+        <div class="text-start p-4 rounded mb-4" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle);">
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Order Number</span>
+                    <strong class="text-info font-monospace" style="font-size: 1.1rem;">@Model.OrderNumber</strong>
+                </div>
+
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Payment Method</span>
+                    <strong class="text-white">@Model.PaymentMethodName</strong>
+                </div>
+
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Transaction ID</span>
+                    <strong class="text-white font-monospace">@Model.MaskedTransactionId</strong>
+                </div>
+
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Amount Transferred</span>
+                    <strong style="color: var(--accent-gold); font-size: 1.1rem;">৳@Model.Amount.ToString("N0") BDT</strong>
+                </div>
+
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Submitted At</span>
+                    <span class="text-secondary" style="font-size: 0.9rem;">@Model.SubmittedAt.ToString("MMM dd, yyyy hh:mm tt") UTC</span>
+                </div>
+
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Reservation Hold Until</span>
+                    <span class="text-warning" style="font-size: 0.9rem;">@Model.ReservationExpiresAt.ToString("MMM dd, yyyy hh:mm tt") UTC</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Critical Notice -->
+        <div class="p-3 rounded mb-4 text-start" style="background: rgba(0, 210, 255, 0.08); border-left: 4px solid var(--accent-cyan);">
+            <h6 style="color: var(--accent-cyan); margin-bottom: 0.25rem;">Next Step: Manual Admin Approval</h6>
+            <p class="text-secondary mb-0" style="font-size: 0.85rem;">
+                Our administrative team independently reconciles submitted transaction IDs against our official MFS statement. 
+                <strong>Your official sequential ticket number (TECH-XXXX) will be generated and emailed to @Model.CustomerEmail only after approval.</strong>
+            </p>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="/" class="btn-tech-outline">
+                Return to Homepage
+            </a>
+            <a href="/ticket/verify" class="btn-tech-outline">
+                Public Ticket Verification Portal
+            </a>
+        </div>
+    </div>
+</div>

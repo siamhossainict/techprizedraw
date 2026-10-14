@@ -1,0 +1,127 @@
+@model TechPrizeDraw.Models.ViewModels.TicketFilterViewModel
+@{
+    ViewData["Title"] = "Ticket Inventory Registry";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h1 class="text-white mb-1" style="font-size: 1.8rem;">Official Ticket Registry</h1>
+        <p class="text-secondary mb-0" style="font-size: 0.85rem;">All generated sequential tickets (TECH-0001 to TECH-5000).</p>
+    </div>
+    <div>
+        <a href="/Admin/Exports/TicketsCsv" class="btn btn-outline-info btn-sm">
+            Export Tickets CSV
+        </a>
+    </div>
+</div>
+
+<!-- Search & Status Filter -->
+<div class="card-tech p-3 mb-4">
+    <form method="get" action="/Admin/Tickets" class="row g-2 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label-tech">Search Tickets</label>
+            <input type="text" name="Search" value="@Model.Search" class="form-control form-tech w-100" placeholder="Ticket #, Name, Mobile, Email, Order #" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label-tech">Status</label>
+            <select name="Status" class="form-select form-tech">
+                <option value="">All Statuses</option>
+                @foreach (var s in Enum.GetValues<TechPrizeDraw.Models.Enums.TicketStatus>())
+                {
+                    <option value="@s" selected="@(Model.Status == s ? "selected" : null)">@s</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-tech-gold w-100">Search</button>
+        </div>
+    </form>
+</div>
+
+<!-- Tickets Table -->
+<div class="card-tech p-4">
+    @if (Model.Tickets != null && Model.Tickets.Any())
+    {
+        <div class="table-responsive">
+            <table class="table-tech">
+                <thead>
+                    <tr>
+                        <th>Seq #</th>
+                        <th>Ticket Number</th>
+                        <th>Participant</th>
+                        <th>Mobile</th>
+                        <th>Order #</th>
+                        <th>MFS Method</th>
+                        <th>Issued At</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var t in Model.Tickets)
+                    {
+                        <tr>
+                            <td><span class="text-secondary font-monospace">@t.SequenceNumber</span></td>
+                            <td><strong style="color: var(--accent-gold); font-size: 1.1rem; letter-spacing: 1px;">@t.TicketNumber</strong></td>
+                            <td class="text-white">@t.Customer?.FullName</td>
+                            <td class="font-monospace text-secondary" style="font-size: 0.85rem;">@t.Customer?.MobileNumber</td>
+                            <td><span class="text-info font-monospace">@t.Order?.OrderNumber</span></td>
+                            <td>@t.Order?.PaymentMethod?.Name</td>
+                            <td class="text-secondary" style="font-size: 0.85rem;">@t.IssuedAt.ToString("MMM dd, yyyy HH:mm")</td>
+                            <td>
+                                <span class="badge-status @(t.Status == TicketStatus.Valid ? "badge-status-valid" : t.Status == TicketStatus.Winner ? "badge-status-winner" : "badge-status-expired")">
+                                    @t.Status
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-1 align-items-center">
+                                    <a href="/Admin/Tickets/Details/@t.Id" class="btn btn-sm btn-outline-secondary">
+                                        Inspect
+                                    </a>
+                                    <a href="/ticket/@t.TicketNumber/voucher" target="_blank" class="btn btn-sm btn-outline-info">
+                                        Voucher
+                                    </a>
+                                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                                    {
+                                        <form asp-area="Admin" asp-controller="Tickets" asp-action="Delete" asp-route-id="@t.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to permanently delete ticket @t.TicketNumber and revoke its entry voucher?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Ticket & Voucher">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-25">
+                <span class="text-secondary" style="font-size: 0.85rem;">
+                    Page @Model.Page of @Model.TotalPages (@Model.TotalItems tickets)
+                </span>
+                <div class="d-flex gap-1">
+                    @if (Model.Page > 1)
+                    {
+                        <a href="@Url.Action("Index", new { page = Model.Page - 1, search = Model.Search, status = Model.Status })" class="btn btn-sm btn-outline-secondary">Previous</a>
+                    }
+                    @if (Model.Page < Model.TotalPages)
+                    {
+                        <a href="@Url.Action("Index", new { page = Model.Page + 1, search = Model.Search, status = Model.Status })" class="btn btn-sm btn-outline-secondary">Next</a>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="text-center py-5 text-secondary">
+            No tickets found matching your query.
+        </div>
+    }
+</div>

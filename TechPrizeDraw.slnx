@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="TechPrizeDraw.Tests/TechPrizeDraw.Tests.csproj" />
+  <Project Path="TechPrizeDraw/TechPrizeDraw.csproj" />
+</Solution>

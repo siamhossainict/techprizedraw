@@ -1,0 +1,182 @@
+@model TechPrizeDraw.Models.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "Secure Checkout & Verification Submission";
+}
+
+<div class="container py-5" style="max-width: 850px;">
+    <!-- Step Header -->
+    <div class="text-center mb-4">
+        <span class="hero-tag">
+            <span class="pulse-dot"></span>
+            <span>ONLY @Model.RemainingTickets.ToString("N0") TICKETS REMAINING</span>
+        </span>
+        <h1 class="mt-2 text-white" style="font-size: 2.2rem;">Reserve Your Ticket</h1>
+        <p class="text-secondary mx-auto" style="max-width: 550px;">
+            Send exactly <strong>৳@Model.TicketPrice.ToString("N0") BDT</strong> via your chosen mobile wallet, then provide your Transaction ID below for manual admin verification.
+        </p>
+    </div>
+
+    <!-- Main Checkout Form Card -->
+    <div class="card-tech p-4 p-md-5">
+        <form asp-controller="Checkout" asp-action="Submit" method="post" id="checkoutForm">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4" role="alert"></div>
+
+            @if (!Model.IsCampaignActive)
+            {
+                <div class="alert alert-warning border border-warning d-flex align-items-center gap-3 p-3 mb-4" style="background: rgba(245, 158, 11, 0.15); border-radius: var(--radius-md);">
+                    <span style="font-size: 1.6rem;">⚠️</span>
+                    <div>
+                        <h5 class="text-warning mb-1" style="font-size: 1rem; font-weight: 700;">Campaign Is Not Currently Accepting Entries</h5>
+                        <p class="text-white mb-0" style="font-size: 0.85rem;">
+                            Current campaign status: <strong>@Model.CampaignStatusText</strong>. Ticket purchases are temporarily closed. If you are an administrator, you can activate the campaign from the <a href="/Admin/Campaign" class="text-info text-decoration-underline">Campaign Settings</a> page.
+                        </p>
+                    </div>
+                </div>
+            }
+
+            <!-- SECTION A: Customer Information -->
+            <div class="mb-5">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-primary" style="font-size: 0.85rem;">STEP 1</span>
+                    <h4 class="text-white mb-0" style="font-size: 1.25rem;">Participant Information</h4>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label asp-for="FullName" class="form-label-tech">Full Name *</label>
+                        <input asp-for="FullName" class="form-control form-tech w-100" placeholder="e.g. Tanvir Ahmed" />
+                        <span asp-validation-for="FullName" class="text-danger" style="font-size: 0.85rem;"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="MobileNumber" class="form-label-tech">Bangladeshi Mobile Number *</label>
+                        <input asp-for="MobileNumber" class="form-control form-tech w-100" placeholder="017XXXXXXXX" />
+                        <span asp-validation-for="MobileNumber" class="text-danger" style="font-size: 0.85rem;"></span>
+                        <small class="text-muted" style="font-size: 0.8rem;">11-digit mobile number used for verification & prize notifications.</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label-tech">Email Address *</label>
+                        <input asp-for="Email" type="email" class="form-control form-tech w-100" placeholder="tanvir@example.com" />
+                        <span asp-validation-for="Email" class="text-danger" style="font-size: 0.85rem;"></span>
+                        <small class="text-muted" style="font-size: 0.8rem;">Your digital ticket voucher will be emailed here upon approval.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION B & C: Select Payment Method & Instructions -->
+            <div class="mb-5">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-primary" style="font-size: 0.85rem;">STEP 2</span>
+                    <h4 class="text-white mb-0" style="font-size: 1.25rem;">Select Payment Method & Send ৳@Model.TicketPrice.ToString("N0") BDT</h4>
+                </div>
+
+                <span asp-validation-for="PaymentMethodId" class="text-danger d-block mb-2" style="font-size: 0.85rem;"></span>
+
+                <div class="row g-3 mb-4">
+                    @if (Model.AvailablePaymentMethods != null && Model.AvailablePaymentMethods.Any())
+                    {
+                        for (int i = 0; i < Model.AvailablePaymentMethods.Count; i++)
+                        {
+                            var pm = Model.AvailablePaymentMethods[i];
+                            bool isSelected = (Model.PaymentMethodId == pm.Id) || (Model.PaymentMethodId == 0 && i == 0);
+
+                            <div class="col-md-6">
+                                <label class="payment-method-card w-100 @(isSelected ? "selected" : "")" for="pm_@pm.Id">
+                                    <input type="radio" asp-for="PaymentMethodId" value="@pm.Id" id="pm_@pm.Id" checked="@(isSelected ? "checked" : null)" />
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <strong style="color: #ffffff; font-size: 1.1rem;">@pm.Name</strong>
+                                            <button type="button" class="btn-copy" data-copy="@pm.AccountNumber">
+                                                Copy Number
+                                            </button>
+                                        </div>
+                                        <div style="font-family: 'Poppins', monospace; font-size: 1.2rem; font-weight: 700; color: var(--accent-gold);">
+                                            @pm.AccountNumber
+                                        </div>
+                                        <div class="text-secondary mt-1" style="font-size: 0.8rem;">
+                                            @pm.Instructions
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <!-- Step-by-Step Payment Instructions Banner -->
+                <div class="p-3 rounded mb-3" style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2);">
+                    <h6 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">Important Payment Guide:</h6>
+                    <ol class="text-secondary mb-0 ps-3" style="font-size: 0.85rem;">
+                        <li>Open your <strong>bKash</strong> or <strong>Nagad</strong> mobile application.</li>
+                        <li>Choose <strong>"Send Money"</strong> to the selected account number above.</li>
+                        <li>Send the exact entry amount of <strong>৳@Model.TicketPrice.ToString("N0") BDT</strong>.</li>
+                        <li>Copy the <strong>Transaction ID</strong> from your confirmation SMS or app statement.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- SECTION D: Transaction Information -->
+            <div class="mb-5">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-primary" style="font-size: 0.85rem;">STEP 3</span>
+                    <h4 class="text-white mb-0" style="font-size: 1.25rem;">Transaction Verification ID</h4>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="TransactionId" class="form-label-tech">MFS Transaction ID (TrxID / TxnID) *</label>
+                    <input asp-for="TransactionId" class="form-control form-tech w-100" style="font-family: monospace; font-size: 1.1rem; letter-spacing: 1px;" placeholder="e.g. BL95X8Z2Q1" autocomplete="off" />
+                    <span asp-validation-for="TransactionId" class="text-danger" style="font-size: 0.85rem;"></span>
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                        Double-check your transaction ID before submitting. Duplicate or fraudulent IDs will be automatically flagged and rejected.
+                    </small>
+                </div>
+            </div>
+
+            <!-- SECTION E: Order Summary -->
+            <div class="p-3 rounded mb-4" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle);">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-secondary">Entry Ticket (TECH Series):</span>
+                    <span class="text-white font-monospace">৳@Model.TicketPrice.ToString("N0") BDT</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-25">
+                    <strong class="text-white">Total Amount Due:</strong>
+                    <strong style="color: var(--accent-gold); font-size: 1.25rem;">৳@Model.TicketPrice.ToString("N0") BDT</strong>
+                </div>
+            </div>
+
+            <!-- SECTION F: Terms Agreement Checkbox -->
+            <div class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" asp-for="AgreeToTerms" id="AgreeToTerms" style="accent-color: var(--accent-gold);" />
+                <label class="form-check-label text-secondary" for="AgreeToTerms" style="font-size: 0.9rem;">
+                    I confirm that I have completed the manual mobile financial transfer and the transaction information provided is genuine and correct. I understand that my ticket will only be finalized after administrator verification.
+                </label>
+                <span asp-validation-for="AgreeToTerms" class="text-danger d-block" style="font-size: 0.85rem;"></span>
+            </div>
+
+            <!-- SECTION G: Submission Button -->
+            <button type="submit" class="btn-tech-gold btn-lg w-100 py-3" style="font-size: 1.1rem; @(!Model.IsCampaignActive ? "opacity: 0.6; cursor: not-allowed;" : "")" @(!Model.IsCampaignActive ? "disabled" : "")>
+                @if (Model.IsCampaignActive)
+                {
+                    <span>⚡ SUBMIT FOR VERIFICATION</span>
+                }
+                else
+                {
+                    <span>🔒 CAMPAIGN CURRENTLY CLOSED</span>
+                }
+            </button>
+            <p class="text-center text-muted mt-2" style="font-size: 0.8rem;">
+                @if (Model.IsCampaignActive)
+                {
+                    <span>No automated card charge occurs. Your transaction will be placed in <em>Pending Verification</em> status.</span>
+                }
+                else
+                {
+                    <span>New entries are disabled while the campaign is in @Model.CampaignStatusText status.</span>
+                }
+            </p>
+        </form>
+    </div>
+</div>

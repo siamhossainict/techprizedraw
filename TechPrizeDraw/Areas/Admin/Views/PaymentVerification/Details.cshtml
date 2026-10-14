@@ -1,0 +1,172 @@
+@model TechPrizeDraw.Models.Entities.Order
+@{
+    ViewData["Title"] = $"Verification Details — #{Model.OrderNumber}";
+    int duplicateCount = ViewBag.DuplicateCount ?? 0;
+    var duplicates = ViewBag.Duplicates as List<TechPrizeDraw.Models.Entities.Order>;
+}
+
+<div class="mb-4">
+    <a href="/Admin/PaymentVerification" class="btn btn-outline-secondary btn-sm mb-2">
+        ← Back to Verification Queue
+    </a>
+    <h1 class="text-white" style="font-size: 1.8rem;">Review Payment #@Model.OrderNumber</h1>
+    <span class="badge-status @(Model.Status == OrderStatus.PendingVerification ? "badge-status-pending" : Model.Status == OrderStatus.Approved ? "badge-status-approved" : "badge-status-rejected")">
+        STATUS: @Model.Status
+    </span>
+</div>
+
+@if (duplicateCount > 0)
+{
+    <div class="alert alert-warning mb-4" style="background: rgba(245, 158, 11, 0.15); border: 1px solid #F59E0B; color: #F59E0B;">
+        <h5 class="alert-heading">⚠️ Fraud Warning: Duplicate Transaction ID Detected!</h5>
+        <p class="mb-2" style="font-size: 0.9rem;">
+            This Transaction ID (<strong>@Model.TransactionId</strong>) was also submitted in <strong>@duplicateCount</strong> other order(s).
+        </p>
+        <ul class="mb-0" style="font-size: 0.85rem;">
+            @if (duplicates != null)
+            {
+                foreach (var dup in duplicates)
+                {
+                    <li>Order <strong>#@dup.OrderNumber</strong> — Status: <span class="badge bg-secondary">@dup.Status</span> submitted on @dup.CreatedAt.ToString("yyyy-MM-dd HH:mm")</li>
+                }
+            }
+        </ul>
+    </div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card-tech p-4 mb-4">
+            <h5 class="text-white mb-3">Order & Transaction Information</h5>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Order Number</span>
+                    <strong class="text-info font-monospace">@Model.OrderNumber</strong>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Amount</span>
+                    <strong style="color: var(--accent-gold); font-size: 1.1rem;">৳@Model.Amount.ToString("N0") BDT</strong>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Payment Method</span>
+                    <span class="badge @(Model.PaymentMethod?.Name.ToLower().Contains("bkash") == true ? "bg-danger" : "bg-warning text-dark")">
+                        @Model.PaymentMethod?.Name
+                    </span>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Receiving Account</span>
+                    <span class="text-white font-monospace">@Model.PaymentMethod?.AccountNumber</span>
+                </div>
+                <div class="col-12">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Customer-Provided Transaction ID</span>
+                    <div class="p-2 rounded mt-1 font-monospace" style="background: var(--bg-surface-elevated); font-size: 1.3rem; font-weight: 700; color: var(--accent-gold); letter-spacing: 1px;">
+                        @Model.TransactionId
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Submission Timestamp</span>
+                    <span class="text-secondary">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss") UTC</span>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">IP Address</span>
+                    <span class="text-secondary font-monospace">@(Model.CustomerIpAddress ?? "Unknown")</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-tech p-4">
+            <h5 class="text-white mb-3">Participant Details</h5>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Full Name</span>
+                    <strong class="text-white">@Model.Customer?.FullName</strong>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Mobile Number</span>
+                    <span class="text-white font-monospace">@Model.Customer?.MobileNumber</span>
+                </div>
+                <div class="col-12">
+                    <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Email Address</span>
+                    <span class="text-white">@Model.Customer?.Email</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        @if (Model.Status == OrderStatus.PendingVerification)
+        {
+            <!-- Verification Decision Box -->
+            <div class="card-tech p-4 mb-4" style="border: 1px solid var(--accent-gold);">
+                <h5 class="text-white mb-3">Verification Decision</h5>
+                <p class="text-secondary" style="font-size: 0.85rem;">
+                    Perform independent verification on your MFS app or merchant portal before approving.
+                </p>
+
+                <!-- Approval Form -->
+                <form asp-area="Admin" asp-controller="PaymentVerification" asp-action="Approve" method="post" class="mb-4">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="OrderId" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label class="form-label-tech">Approval Note</label>
+                        <input type="text" name="AdminNote" class="form-control form-tech w-100" placeholder="e.g. Confirmed on MFS statement." />
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 py-2" onclick="return confirm('Confirm independent verification of ৳@Model.Amount BDT? Ticket will be issued immediately.');">
+                        ✓ APPROVE PAYMENT & ISSUE TICKET
+                    </button>
+                </form>
+
+                <hr class="border-secondary opacity-25 my-4" />
+
+                <!-- Rejection Form -->
+                <form asp-area="Admin" asp-controller="PaymentVerification" asp-action="Reject" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="OrderId" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label class="form-label-tech">Rejection Reason *</label>
+                        <select name="Reason" class="form-select form-tech" required>
+                            <option value="Invalid Transaction ID">Invalid Transaction ID (TrxID not found)</option>
+                            <option value="Payment Not Received">Payment Not Received on Statement</option>
+                            <option value="Incorrect Amount Transferred">Incorrect Amount (Not ৳50)</option>
+                            <option value="Duplicate Transaction ID">Duplicate Transaction ID</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label-tech">Rejection Note</label>
+                        <textarea name="AdminNote" class="form-control form-tech w-100" rows="2" placeholder="Internal notes"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Are you sure you want to reject this order? Inventory will be released.');">
+                        ✕ REJECT PAYMENT
+                    </button>
+                </form>
+            </div>
+        }
+        else if (Model.Status == OrderStatus.Approved && Model.Ticket != null)
+        {
+            <div class="card-tech p-4 text-center">
+                <span class="badge bg-success mb-2">APPROVED</span>
+                <h4 class="text-white mb-2">Official Ticket Issued</h4>
+                <div style="font-family: 'Poppins', monospace; font-size: 2.2rem; font-weight: 800; color: var(--accent-gold);">
+                    @Model.Ticket.TicketNumber
+                </div>
+                <p class="text-secondary mt-2 mb-3" style="font-size: 0.85rem;">
+                    Approved by: @Model.ApprovedBy on @Model.ApprovedAt?.ToString("yyyy-MM-dd HH:mm")
+                </p>
+                <a href="/ticket/@Model.Ticket.TicketNumber/voucher" target="_blank" class="btn btn-tech-outline btn-sm">
+                    View Digital Voucher →
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="card-tech p-4 text-center">
+                <span class="badge bg-danger mb-2">@Model.Status</span>
+                <h5 class="text-white mt-2">Order Not Active</h5>
+                <p class="text-secondary" style="font-size: 0.85rem;">
+                    Reason: @(Model.RejectionReason ?? Model.AdminNote ?? "N/A")
+                </p>
+            </div>
+        }
+    </div>
+</div>

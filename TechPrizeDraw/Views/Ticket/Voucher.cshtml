@@ -1,0 +1,107 @@
+@model TechPrizeDraw.Models.ViewModels.TicketVoucherViewModel
+@{
+    ViewData["Title"] = $"Official Voucher — {Model.TicketNumber}";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-4 no-print">
+        <span class="badge bg-success px-3 py-2 mb-2" style="font-size: 0.85rem;">
+            AUTHENTIC TICKET VOUCHER
+        </span>
+        <h1 class="text-white mt-1" style="font-size: 2rem;">Digital Entry Voucher</h1>
+        <p class="text-secondary">This digital voucher confirms your verified participation in the TECH Prize Draw.</p>
+        <button onclick="window.print()" class="btn-tech-outline btn-sm btn-print">
+            🖨️ Print / Save Voucher
+        </button>
+    </div>
+
+    <!-- Premium Holographic Ticket Container -->
+    <div class="digital-ticket-container">
+        <div class="ticket-hologram-shimmer"></div>
+
+        <!-- Ticket Header -->
+        <div class="ticket-header">
+            <div class="d-flex align-items-center gap-3">
+                <span style="font-size: 2rem; color: #00D2FF;">⚡</span>
+                <div>
+                    <h2 style="font-size: 1.5rem; margin: 0; color: #ffffff; letter-spacing: 1px;">@Model.CampaignName</h2>
+                    <small style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px;">
+                        Limited-Edition Technology Prize Draw &bull; Bangladesh
+                    </small>
+                </div>
+            </div>
+            <div>
+                <span class="badge-status badge-status-valid">
+                    ● @Model.Status
+                </span>
+            </div>
+        </div>
+
+        <!-- Ticket Body -->
+        <div class="ticket-body">
+            <div class="row align-items-center g-4">
+                <div class="col-md-7">
+                    <span class="text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">Official Entry Number</span>
+                    <div style="font-family: 'Poppins', monospace; font-size: 3rem; font-weight: 900; color: var(--accent-gold); line-height: 1; letter-spacing: 2px; margin: 0.25rem 0 1.5rem;">
+                        @Model.TicketNumber
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <span class="text-secondary d-block" style="font-size: 0.75rem; text-transform: uppercase;">Participant</span>
+                            <strong class="text-white" style="font-size: 1rem;">@Model.CustomerName</strong>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-secondary d-block" style="font-size: 0.75rem; text-transform: uppercase;">Mobile Number</span>
+                            <span class="text-white font-monospace">@Model.CustomerMobile</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-secondary d-block" style="font-size: 0.75rem; text-transform: uppercase;">Order Reference</span>
+                            <span class="text-info font-monospace" style="font-size: 0.85rem;">@Model.OrderNumber</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-secondary d-block" style="font-size: 0.75rem; text-transform: uppercase;">Purchase Amount</span>
+                            <strong style="color: var(--accent-gold);">৳@Model.Amount.ToString("N0") BDT</strong>
+                        </div>
+                        <div class="col-12">
+                            <span class="text-secondary d-block" style="font-size: 0.75rem; text-transform: uppercase;">Scheduled Draw Date</span>
+                            <strong style="color: var(--accent-cyan); font-size: 1.05rem;">
+                                @(Model.DrawDate?.ToString("dddd, MMMM dd, yyyy") ?? "To Be Announced")
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Code Box -->
+                <div class="col-md-5 text-center">
+                    <div class="ticket-qr-box">
+                        <img src="@Model.QrCodeDataUri" alt="QR Verification Code" />
+                    </div>
+                    <div class="mt-2 text-muted" style="font-size: 0.75rem;">
+                        Scan QR code to verify database validity
+                    </div>
+                    <a href="@Model.VerificationUrl" class="d-inline-block mt-2 text-decoration-none" style="color: var(--accent-cyan); font-size: 0.8rem;">
+                        Verify Online →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticket Perforation -->
+        <div class="ticket-perforation">
+            <div class="ticket-notch-left"></div>
+            <div class="ticket-dashed-line"></div>
+            <div class="ticket-notch-right"></div>
+        </div>
+
+        <!-- Ticket Footer Stub -->
+        <div class="p-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2" style="background: #060D22; font-size: 0.75rem; color: var(--text-muted);">
+            <div>
+                Verified & Issued: @Model.IssuedAt.ToString("yyyy-MM-dd HH:mm") UTC
+            </div>
+            <div>
+                Eligible Prizes: 1st: Laptop &bull; 2nd: Audio Interface &bull; 3rd: Acoustic Guitar
+            </div>
+        </div>
+    </div>
+</div>

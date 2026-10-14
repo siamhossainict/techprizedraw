@@ -1,0 +1,690 @@
+/* ==========================================================================
+   TECH Prize Draw - Premium Deep Navy & Gold Design System
+   ========================================================================== */
+
+:root {
+    --bg-primary: #050A18;
+    --bg-secondary: #0A122A;
+    --bg-surface: #0E1A3D;
+    --bg-surface-elevated: #14224F;
+    --bg-surface-hover: #1A2B63;
+
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-glow: rgba(0, 210, 255, 0.2);
+    --border-active: rgba(229, 169, 60, 0.5);
+
+    --accent-gold: #E5A93C;
+    --accent-gold-light: #F5C842;
+    --accent-gold-dark: #C68E28;
+    --accent-gold-gradient: linear-gradient(135deg, #F5C842 0%, #E5A93C 50%, #C68E28 100%);
+
+    --accent-cyan: #00D2FF;
+    --accent-cyan-light: #38BDF8;
+    --accent-cyan-glow: 0 0 20px rgba(0, 210, 255, 0.35);
+
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    --text-gold: #F5C842;
+
+    --status-success: #10B981;
+    --status-warning: #F59E0B;
+    --status-danger: #EF4444;
+    --status-info: #38BDF8;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+
+    --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 25px rgba(0, 210, 255, 0.15);
+    --shadow-gold: 0 8px 25px rgba(229, 169, 60, 0.25);
+
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Global Reset & Base Typography */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    scrollbar-width: thin;
+    scrollbar-color: #00D2FF #060B18;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Guaranteed Visible High-End Scrollbar for Chrome, Edge, Safari, Opera */
+::-webkit-scrollbar {
+    width: 12px !important;
+    height: 12px !important;
+    display: block !important;
+}
+
+::-webkit-scrollbar-track {
+    background: #060B18 !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #00D2FF 0%, #0A58CA 100%) !important;
+    border-radius: 6px !important;
+    border: 2px solid #060B18 !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #F5C842 0%, #E5A93C 100%) !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', 'Inter', sans-serif;
+    color: var(--text-primary);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-top: 0;
+}
+
+a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--accent-gold-light);
+}
+
+/* Background Atmospheric Glow */
+.atmospheric-bg {
+    position: relative;
+}
+
+.atmospheric-bg::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 210, 255, 0.08) 0%, rgba(14, 26, 61, 0) 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.atmospheric-bg::after {
+    content: '';
+    position: absolute;
+    top: 30%;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(229, 169, 60, 0.06) 0%, rgba(5, 10, 24, 0) 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Navbar */
+.tech-navbar {
+    background: rgba(10, 18, 42, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: all var(--transition-normal);
+}
+
+.tech-navbar .nav-link {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    transition: all var(--transition-fast);
+}
+
+.tech-navbar .nav-link:hover,
+.tech-navbar .nav-link.active {
+    color: #ffffff;
+}
+
+.tech-brand {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tech-brand .badge-tech {
+    background: var(--accent-gold-gradient);
+    color: var(--bg-primary);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.5px;
+}
+
+/* Cards & Surfaces */
+.card-tech {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    transition: transform var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-tech:hover {
+    border-color: var(--border-glow);
+    box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.8), var(--shadow-glow);
+}
+
+.card-tech-gold {
+    border: 1px solid rgba(229, 169, 60, 0.3);
+}
+
+.card-tech-gold:hover {
+    border-color: var(--accent-gold);
+    box-shadow: var(--shadow-card), var(--shadow-gold);
+}
+
+/* Buttons */
+.btn-tech-gold {
+    background: var(--accent-gold-gradient);
+    color: var(--bg-primary) !important;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    padding: 0.75rem 1.8rem;
+    border-radius: var(--radius-md);
+    border: none;
+    box-shadow: var(--shadow-gold);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.btn-tech-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(229, 169, 60, 0.4);
+    filter: brightness(1.06);
+}
+
+.btn-tech-outline {
+    background: transparent;
+    color: var(--text-primary) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.8rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.btn-tech-outline:hover {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan) !important;
+    background: rgba(0, 210, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+.btn-tech-cyan {
+    background: linear-gradient(135deg, #00D2FF 0%, #0284C7 100%);
+    color: #ffffff !important;
+    font-weight: 700;
+    padding: 0.75rem 1.8rem;
+    border-radius: var(--radius-md);
+    border: none;
+    box-shadow: var(--shadow-glow);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.btn-tech-cyan:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 5rem 0 4rem;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 1rem;
+    border-radius: 50px;
+    background: rgba(0, 210, 255, 0.1);
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    color: var(--accent-cyan);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.hero-tag .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--accent-cyan);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 210, 255, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); }
+}
+
+.hero-title {
+    font-size: clamp(2.5rem, 6vw, 4.2rem);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(180deg, #FFFFFF 0%, #94A3B8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-title .highlight-gold {
+    background: var(--accent-gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 650px;
+    margin-bottom: 2.5rem;
+}
+
+/* Live Inventory Counter Card */
+.inventory-widget {
+    background: rgba(14, 26, 61, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 210, 255, 0.25);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), var(--shadow-glow);
+    position: relative;
+}
+
+.inventory-counter-value {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1;
+}
+
+.inventory-progress-bar {
+    height: 12px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    margin: 1.25rem 0 0.75rem;
+}
+
+.inventory-progress-fill {
+    height: 100%;
+    background: var(--accent-gold-gradient);
+    border-radius: 6px;
+    transition: width 1s ease-in-out;
+}
+
+.inventory-progress-pending {
+    height: 100%;
+    background: var(--accent-cyan);
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+    transition: width 1s ease-in-out;
+}
+
+/* Process Steps */
+.step-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 2rem 1.5rem;
+    height: 100%;
+    position: relative;
+    transition: transform var(--transition-normal), border-color var(--transition-normal);
+}
+
+.step-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent-cyan);
+}
+
+.step-number {
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-family: 'Poppins', sans-serif;
+    color: rgba(255, 255, 255, 0.1);
+    line-height: 1;
+    margin-bottom: 1rem;
+    transition: color var(--transition-fast);
+}
+
+.step-card:hover .step-number {
+    color: var(--accent-gold);
+}
+
+/* Prize Cards */
+.prize-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.prize-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent-gold);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8), var(--shadow-gold);
+}
+
+.prize-image-wrap {
+    height: 220px;
+    background: radial-gradient(circle, #182859 0%, #0A122A 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 1.5rem;
+}
+
+.prize-image-wrap svg,
+.prize-image-wrap img {
+    max-height: 160px;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 15px 20px rgba(0, 0, 0, 0.6));
+    transition: transform var(--transition-normal);
+}
+
+.prize-card:hover .prize-image-wrap svg,
+.prize-card:hover .prize-image-wrap img {
+    transform: scale(1.06);
+}
+
+.prize-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: var(--accent-gold-gradient);
+    color: var(--bg-primary);
+    font-weight: 800;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.5px;
+}
+
+.prize-body {
+    padding: 1.75rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Payment Method Selectable Cards */
+.payment-method-card {
+    background: var(--bg-surface);
+    border: 2px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.payment-method-card:hover {
+    border-color: var(--accent-cyan);
+    background: var(--bg-surface-elevated);
+}
+
+.payment-method-card.selected {
+    border-color: var(--accent-gold);
+    background: rgba(229, 169, 60, 0.08);
+}
+
+.payment-method-card input[type="radio"] {
+    accent-color: var(--accent-gold);
+    width: 20px;
+    height: 20px;
+}
+
+/* Copy button */
+.btn-copy {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-copy:hover {
+    background: var(--accent-cyan);
+    color: var(--bg-primary);
+    border-color: var(--accent-cyan);
+}
+
+.btn-copy.copied {
+    background: var(--status-success);
+    color: #ffffff;
+    border-color: var(--status-success);
+}
+
+/* Digital Ticket Voucher Design */
+.digital-ticket-container {
+    max-width: 750px;
+    margin: 2rem auto;
+    background: linear-gradient(135deg, #09132E 0%, #111E48 100%);
+    border: 2px solid var(--accent-gold);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), var(--shadow-gold);
+    position: relative;
+    overflow: hidden;
+}
+
+.ticket-hologram-shimmer {
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    transform: skewX(-25deg);
+    animation: shimmer 6s infinite;
+    pointer-events: none;
+}
+
+@keyframes shimmer {
+    0% { left: -150%; }
+    30% { left: 150%; }
+    100% { left: 150%; }
+}
+
+.ticket-header {
+    background: #060D22;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ticket-body {
+    padding: 2rem;
+}
+
+.ticket-perforation {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin: 0 -2px;
+}
+
+.ticket-notch-left,
+.ticket-notch-right {
+    width: 24px;
+    height: 24px;
+    background-color: var(--bg-primary);
+    border-radius: 50%;
+    position: absolute;
+    top: -12px;
+    z-index: 2;
+}
+
+.ticket-notch-left { left: -12px; border-right: 2px solid var(--accent-gold); }
+.ticket-notch-right { right: -12px; border-left: 2px solid var(--accent-gold); }
+
+.ticket-dashed-line {
+    width: 100%;
+    height: 1px;
+    border-top: 2px dashed rgba(229, 169, 60, 0.4);
+}
+
+.ticket-qr-box {
+    background: #ffffff;
+    padding: 10px;
+    border-radius: var(--radius-md);
+    display: inline-block;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.ticket-qr-box img {
+    display: block;
+    width: 130px;
+    height: 130px;
+}
+
+/* Compliance Banner */
+.compliance-banner {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    color: #FCA5A5;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Form Controls */
+.form-tech {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: all var(--transition-fast);
+}
+
+.form-tech:focus {
+    background: var(--bg-surface-hover);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.2);
+    color: #ffffff;
+    outline: none;
+}
+
+.form-label-tech {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 3rem 0 2rem;
+    }
+    .inventory-counter-value {
+        font-size: 2.2rem;
+    }
+    .ticket-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+}
+
+/* Print Styles for Digital Voucher */
+@media print {
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+    .tech-navbar, .tech-footer, .btn-print, .no-print {
+        display: none !important;
+    }
+    .digital-ticket-container {
+        border: 2px solid #000000 !important;
+        box-shadow: none !important;
+        color: #000000 !important;
+        background: #ffffff !important;
+    }
+    .ticket-header {
+        background: #f1f5f9 !important;
+        color: #000000 !important;
+    }
+}

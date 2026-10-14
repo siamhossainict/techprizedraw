@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="240" height="240">
+  <defs>
+    <linearGradient id="woodBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D97706" />
+      <stop offset="50%" stop-color="#B45309" />
+      <stop offset="100%" stop-color="#78350F" />
+    </linearGradient>
+    <linearGradient id="sunburst" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="60%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#451A03" />
+    </linearGradient>
+  </defs>
+  <!-- Glow -->
+  <circle cx="256" cy="256" r="180" fill="#D97706" opacity="0.1" filter="blur(30px)" />
+  <!-- Guitar Neck & Headstock -->
+  <rect x="246" y="40" width="20" height="220" fill="#78350F" stroke="#451A03" stroke-width="2" />
+  <!-- Frets -->
+  <line x1="246" y1="80" x2="266" y2="80" stroke="#E2E8F0" stroke-width="2" />
+  <line x1="246" y1="120" x2="266" y2="120" stroke="#E2E8F0" stroke-width="2" />
+  <line x1="246" y1="160" x2="266" y2="160" stroke="#E2E8F0" stroke-width="2" />
+  <line x1="246" y1="200" x2="266" y2="200" stroke="#E2E8F0" stroke-width="2" />
+  <!-- Headstock -->
+  <path d="M242 40 L270 40 L274 15 L238 15 Z" fill="#451A03" stroke="#292524" stroke-width="2" />
+  <circle cx="240" cy="22" r="3" fill="#E2E8F0" />
+  <circle cx="240" cy="32" r="3" fill="#E2E8F0" />
+  <circle cx="272" cy="22" r="3" fill="#E2E8F0" />
+  <circle cx="272" cy="32" r="3" fill="#E2E8F0" />
+  <!-- Body Outline - Figure 8 -->
+  <path d="M220 230 C170 230 160 280 180 320 C150 350 140 430 200 470 C240 490 272 490 312 470 C372 430 362 350 332 320 C352 280 342 230 292 230 Z" 
+        fill="url(#woodBody)" stroke="#451A03" stroke-width="4" />
+  <!-- Soundhole -->
+  <circle cx="256" cy="320" r="36" fill="#18181B" stroke="#FDE68A" stroke-width="4" />
+  <circle cx="256" cy="320" r="42" fill="none" stroke="#78350F" stroke-width="2" />
+  <!-- Bridge -->
+  <rect x="232" y="410" width="48" height="14" rx="3" fill="#451A03" stroke="#1C1917" stroke-width="1.5" />
+  <rect x="238" y="413" width="36" height="3" fill="#F8FAFC" />
+  <!-- Strings -->
+  <line x1="250" y1="25" x2="250" y2="415" stroke="#FFFFFF" stroke-width="1" opacity="0.8" />
+  <line x1="253" y1="25" x2="253" y2="415" stroke="#FFFFFF" stroke-width="1" opacity="0.8" />
+  <line x1="256" y1="25" x2="256" y2="415" stroke="#FFFFFF" stroke-width="1" opacity="0.8" />
+  <line x1="259" y1="25" x2="259" y2="415" stroke="#FFFFFF" stroke-width="1" opacity="0.8" />
+  <line x1="262" y1="25" x2="262" y2="415" stroke="#FFFFFF" stroke-width="1" opacity="0.8" />
+</svg>

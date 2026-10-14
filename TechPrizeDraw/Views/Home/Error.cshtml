@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Error";
+    int statusCode = ViewBag.StatusCode ?? 500;
+}
+
+<div class="container py-5 text-center" style="max-width: 600px;">
+    <div class="card-tech p-5">
+        <div style="font-size: 4rem; color: var(--accent-cyan); font-weight: 900; font-family: 'Poppins', sans-serif;">
+            @statusCode
+        </div>
+        <h2 class="text-white mt-2 mb-3">
+            @if (statusCode == 404)
+            {
+                <span>Page or Resource Not Found</span>
+            }
+            else
+            {
+                <span>An Unexpected Error Occurred</span>
+            }
+        </h2>
+        <p class="text-secondary mb-4">
+            @if (statusCode == 404)
+            {
+                <span>The ticket, order, or page you were looking for does not exist or has been relocated.</span>
+            }
+            else
+            {
+                <span>We experienced an internal system issue while processing your request. Please rest assured that no sensitive details were compromised.</span>
+            }
+        </p>
+        <a href="/" class="btn-tech-gold">
+            Return to Homepage
+        </a>
+    </div>
+</div>

@@ -1,0 +1,161 @@
+@model TechPrizeDraw.Models.ViewModels.OrderFilterViewModel
+@{
+    ViewData["Title"] = "Order Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h1 class="text-white mb-1" style="font-size: 1.8rem;">Orders & Submissions</h1>
+        <p class="text-secondary mb-0" style="font-size: 0.85rem;">All customer entries, reservations, approvals, and rejections.</p>
+    </div>
+    <div>
+        <a href="/Admin/Exports/OrdersCsv" class="btn btn-outline-info btn-sm">
+            Export Orders CSV
+        </a>
+    </div>
+</div>
+
+<!-- Filters Bar -->
+<div class="card-tech p-3 mb-4">
+    <form method="get" action="/Admin/Orders" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label-tech">Search</label>
+            <input type="text" name="Search" value="@Model.Search" class="form-control form-tech w-100" placeholder="Order #, TrxID, Name, Mobile, Email" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label-tech">Status</label>
+            <select name="Status" class="form-select form-tech">
+                <option value="">All Statuses</option>
+                @foreach (var s in Enum.GetValues<TechPrizeDraw.Models.Enums.OrderStatus>())
+                {
+                    <option value="@s" selected="@(Model.Status == s ? "selected" : null)">@s</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label-tech">Payment Method</label>
+            <select name="PaymentMethodId" class="form-select form-tech">
+                <option value="">All Methods</option>
+                @foreach (var pm in Model.PaymentMethods)
+                {
+                    <option value="@pm.Id" selected="@(Model.PaymentMethodId == pm.Id ? "selected" : null)">@pm.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label-tech">From Date</label>
+            <input type="date" name="FromDate" value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" class="form-control form-tech w-100" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label-tech">To Date</label>
+            <input type="date" name="ToDate" value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" class="form-control form-tech w-100" />
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-tech-gold w-100">Filter</button>
+        </div>
+    </form>
+</div>
+
+<!-- Orders Table -->
+<div class="card-tech p-4">
+    @if (Model.Orders != null && Model.Orders.Any())
+    {
+        <div class="table-responsive">
+            <table class="table-tech">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Participant</th>
+                        <th>Mobile</th>
+                        <th>Method</th>
+                        <th>Transaction ID</th>
+                        <th>Amount</th>
+                        <th>Ticket</th>
+                        <th>Status</th>
+                        <th>Submitted At</th>
+                        <th class="text-end">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model.Orders)
+                    {
+                        <tr>
+                            <td><strong class="text-info font-monospace">@o.OrderNumber</strong></td>
+                            <td class="text-white">@o.Customer?.FullName</td>
+                            <td class="font-monospace text-secondary" style="font-size: 0.85rem;">@o.Customer?.MobileNumber</td>
+                            <td>
+                                <span class="badge @(o.PaymentMethod?.Name.ToLower().Contains("bkash") == true ? "bg-danger" : "bg-warning text-dark")">
+                                    @o.PaymentMethod?.Name
+                                </span>
+                            </td>
+                            <td><span class="font-monospace text-warning">@o.TransactionId</span></td>
+                            <td><strong class="text-white">৳@o.Amount.ToString("N0")</strong></td>
+                            <td>
+                                @if (o.Ticket != null)
+                                {
+                                    <strong style="color: var(--accent-gold);">@o.Ticket.TicketNumber</strong>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge-status @(o.Status == OrderStatus.Approved ? "badge-status-approved" : o.Status == OrderStatus.PendingVerification ? "badge-status-pending" : "badge-status-rejected")">
+                                    @o.Status
+                                </span>
+                            </td>
+                            <td class="text-secondary" style="font-size: 0.85rem;">@o.CreatedAt.ToString("MMM dd, yyyy HH:mm")</td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-1 align-items-center">
+                                    <a href="/Admin/Orders/Details/@o.Id" class="btn btn-sm btn-outline-secondary">
+                                        View
+                                    </a>
+                                    @if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                                    {
+                                        <form asp-area="Admin" asp-controller="Orders" asp-action="Delete" asp-route-id="@o.Id" method="post" class="d-inline" onsubmit="return confirm('Delete order @o.OrderNumber and linked records?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Order">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-25">
+                <span class="text-secondary" style="font-size: 0.85rem;">
+                    Showing page @Model.Page of @Model.TotalPages (@Model.TotalItems total orders)
+                </span>
+                <div class="d-flex gap-1">
+                    @if (Model.Page > 1)
+                    {
+                        <a href="@Url.Action("Index", new { page = Model.Page - 1, search = Model.Search, status = Model.Status, paymentMethodId = Model.PaymentMethodId })" class="btn btn-sm btn-outline-secondary">
+                            Previous
+                        </a>
+                    }
+                    @if (Model.Page < Model.TotalPages)
+                    {
+                        <a href="@Url.Action("Index", new { page = Model.Page + 1, search = Model.Search, status = Model.Status, paymentMethodId = Model.PaymentMethodId })" class="btn btn-sm btn-outline-secondary">
+                            Next
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="text-center py-5 text-secondary">
+            No matching orders found.
+        </div>
+    }
+</div>

@@ -1,0 +1,93 @@
+@model List<TechPrizeDraw.Models.Entities.AuditLog>
+@{
+    ViewData["Title"] = "Security & Audit Registry";
+    int page = ViewBag.Page ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalItems = ViewBag.TotalItems ?? 0;
+    string search = ViewBag.Search as string ?? string.Empty;
+}
+
+<div class="mb-4">
+    <h1 class="text-white mb-1" style="font-size: 1.8rem;">Security & Operational Audit Trail</h1>
+    <p class="text-secondary mb-0" style="font-size: 0.85rem;">
+        Immutable event log of payments submitted, approvals, rejections, ticket generations, draw execution, and setting adjustments.
+    </p>
+</div>
+
+<!-- Search Bar -->
+<div class="card-tech p-3 mb-4">
+    <form method="get" action="/Admin/AuditLogs" class="row g-2">
+        <div class="col-md-9">
+            <input type="text" name="search" value="@search" class="form-control form-tech w-100" placeholder="Filter by username, action, entity, or description..." />
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-tech-gold w-100">Filter Audit Logs</button>
+        </div>
+    </form>
+</div>
+
+<!-- Audit Log Table -->
+<div class="card-tech p-4">
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table-tech" style="font-size: 0.85rem;">
+                <thead>
+                    <tr>
+                        <th>Timestamp (UTC)</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Entity</th>
+                        <th>Description</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model)
+                    {
+                        <tr>
+                            <td class="text-secondary font-monospace">@log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td><strong class="text-white">@log.Username</strong></td>
+                            <td>
+                                <span class="badge bg-dark border border-secondary text-info">
+                                    @log.Action
+                                </span>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(log.EntityName))
+                                {
+                                    <span class="text-secondary">@log.EntityName #@log.EntityId</span>
+                                }
+                            </td>
+                            <td class="text-white" style="max-width: 320px;">@log.Description</td>
+                            <td class="text-secondary font-monospace">@(log.IpAddress ?? "—")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (totalPages > 1)
+        {
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary border-opacity-25">
+                <span class="text-secondary" style="font-size: 0.85rem;">Page @(page) of @(totalPages) (@totalItems events)</span>
+                <div class="d-flex gap-1">
+                    @if (page > 1)
+                    {
+                        <a href="@Url.Action("Index", new { page = page - 1, search })" class="btn btn-sm btn-outline-secondary">Previous</a>
+                    }
+                    @if (page < totalPages)
+                    {
+                        <a href="@Url.Action("Index", new { page = page + 1, search })" class="btn btn-sm btn-outline-secondary">Next</a>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="text-center py-4 text-secondary">
+            No audit records matching your criteria.
+        </div>
+    }
+</div>

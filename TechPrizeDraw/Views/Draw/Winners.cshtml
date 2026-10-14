@@ -1,0 +1,98 @@
+@model TechPrizeDraw.Models.DTOs.DrawResultDto
+@{
+    ViewData["Title"] = "Official Winners Registry";
+    var campaign = ViewBag.Campaign as TechPrizeDraw.Models.Entities.Campaign;
+    var prizes = ViewBag.Prizes as List<TechPrizeDraw.Models.Entities.Prize>;
+}
+
+<div class="container py-5 text-center">
+    <div class="mb-5">
+        <span class="hero-tag">
+            <span>🏆 OFFICIAL PRIZE DRAW RESULTS</span>
+        </span>
+        <h1 class="text-white mt-2" style="font-size: 2.5rem;">TECH Prize Draw Winners</h1>
+        <p class="text-secondary mx-auto" style="max-width: 600px;">
+            Audited, randomized results powered by cryptographic hardware randomness (<code style="color: var(--accent-cyan);">RandomNumberGenerator</code>).
+        </p>
+    </div>
+
+    @if (Model != null && Model.Winners != null && Model.Winners.Any())
+    {
+        <div class="row g-4 justify-content-center mb-5">
+            @foreach (var winner in Model.Winners.OrderBy(w => w.Position))
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card-tech card-tech-gold p-4 text-center h-100">
+                        <div class="mb-3">
+                            <span class="badge @(winner.Position == 1 ? "bg-warning text-dark" : winner.Position == 2 ? "bg-secondary text-white" : "bg-danger text-white") px-3 py-2" style="font-weight: 800; font-size: 0.85rem; letter-spacing: 0.5px;">
+                                @(winner.Position == 1 ? "🥇 1ST PRIZE" : winner.Position == 2 ? "🥈 2ND PRIZE" : "🥉 3RD PRIZE")
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <img src="@winner.PrizeImageUrl" alt="@winner.PrizeName" style="max-height: 120px; object-fit: contain;" />
+                        </div>
+
+                        <h3 class="text-white" style="font-size: 1.3rem; margin-bottom: 0.25rem;">@winner.PrizeName</h3>
+                        <p class="text-secondary mb-3" style="font-size: 0.85rem;">@winner.PrizeTitle</p>
+
+                        <!-- Winning Ticket Box -->
+                        <div class="p-3 rounded mb-3" style="background: rgba(229, 169, 60, 0.1); border: 1px dashed var(--accent-gold);">
+                            <span class="text-muted text-uppercase d-block" style="font-size: 0.75rem;">Winning Ticket</span>
+                            <div style="font-family: 'Poppins', monospace; font-size: 1.8rem; font-weight: 800; color: var(--accent-gold); letter-spacing: 1px;">
+                                @winner.TicketNumber
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-top border-secondary border-opacity-25 text-secondary" style="font-size: 0.85rem;">
+                            Participant: <strong class="text-white">@winner.CustomerMaskedName</strong>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Draw Cryptographic Audit Box -->
+        <div class="card-tech p-4 text-start mx-auto" style="max-width: 750px;">
+            <h5 class="text-white mb-2" style="font-size: 1.1rem;">Cryptographic Audit Record</h5>
+            <div class="row g-2 text-secondary" style="font-size: 0.85rem;">
+                <div class="col-sm-6">
+                    Draw Execution Time: <strong class="text-white">@Model.DrawDateTime.ToString("yyyy-MM-dd HH:mm:ss") UTC</strong>
+                </div>
+                <div class="col-sm-6">
+                    Total Valid Tickets in Draw Pool: <strong class="text-white">@Model.EligibleTicketsCount.ToString("N0")</strong>
+                </div>
+                <div class="col-sm-6">
+                    Selection Algorithm: <strong class="text-info">@Model.DrawMethod</strong>
+                </div>
+                <div class="col-sm-6">
+                    Draw Operator: <strong class="text-white">@Model.ExecutedBy</strong>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Upcoming Draw Notice -->
+        <div class="card-tech p-5 mx-auto" style="max-width: 650px;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
+            <h3 class="text-white mb-3">Draw Scheduled & Awaiting Campaign Closure</h3>
+            <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                The official random prize draw has not yet been executed. Once ticket sales conclude and all pending payments are verified, the draw will be conducted transparently.
+            </p>
+
+            <div class="p-3 rounded mb-4" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); display: inline-block;">
+                <span class="text-secondary d-block" style="font-size: 0.8rem; text-transform: uppercase;">Scheduled Draw Date</span>
+                <strong style="color: var(--accent-gold); font-size: 1.2rem;">
+                    @(campaign?.DrawDate.ToString("dddd, MMMM dd, yyyy") ?? "To Be Announced")
+                </strong>
+            </div>
+
+            <div>
+                <a asp-controller="Checkout" asp-action="Index" class="btn-tech-gold">
+                    Enter Prize Draw (৳50) →
+                </a>
+            </div>
+        </div>
+    }
+</div>

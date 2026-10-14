@@ -1,0 +1,64 @@
+@model TechPrizeDraw.Models.Entities.Prize
+@{
+    ViewData["Title"] = $"Edit {Model.Title} — {Model.Name}";
+}
+
+<div class="mb-4">
+    <a href="/Admin/Prizes" class="btn btn-outline-secondary btn-sm mb-2">← Back to Prizes</a>
+    <h1 class="text-white" style="font-size: 1.8rem;">Edit @Model.Title</h1>
+</div>
+
+<div class="card-tech p-4" style="max-width: 650px;">
+    <form asp-area="Admin" asp-controller="Prizes" asp-action="Edit" asp-route-id="@Model.Id" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Position" />
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label-tech">Prize Title *</label>
+            <input asp-for="Title" class="form-control form-tech w-100" required />
+            <span asp-validation-for="Title" class="text-danger" style="font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label-tech">Prize Name *</label>
+            <input asp-for="Name" class="form-control form-tech w-100" placeholder="e.g. Next-Gen Pro Laptop" required />
+            <span asp-validation-for="Name" class="text-danger" style="font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label-tech">Detailed Description</label>
+            <textarea asp-for="Description" class="form-control form-tech w-100" rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger" style="font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Specifications" class="form-label-tech">Key Specifications</label>
+            <input asp-for="Specifications" class="form-control form-tech w-100" placeholder="e.g. 16GB RAM / 512GB SSD / M-Series" />
+            <span asp-validation-for="Specifications" class="text-danger" style="font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ImageUrl" class="form-label-tech">Image URL or Asset Path *</label>
+            <input asp-for="ImageUrl" class="form-control form-tech w-100" required />
+            <span asp-validation-for="ImageUrl" class="text-danger" style="font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6">
+                <label asp-for="EstimatedValue" class="form-label-tech">Estimated Value (BDT)</label>
+                <input asp-for="EstimatedValue" type="number" step="100" class="form-control form-tech w-100" />
+            </div>
+            <div class="col-sm-6 d-flex align-items-center mt-4">
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                    <label asp-for="IsActive" class="form-check-label text-white">Active in Showcase</label>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-tech-gold w-100">
+            Save Prize Changes
+        </button>
+    </form>
+</div>

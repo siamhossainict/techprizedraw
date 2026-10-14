@@ -1,0 +1,85 @@
+@model List<TechPrizeDraw.Models.Entities.PaymentMethod>
+@{
+    ViewData["Title"] = "Payment Numbers Management";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h1 class="text-white mb-1" style="font-size: 1.8rem;">Mobile Financial Accounts</h1>
+        <p class="text-secondary mb-0" style="font-size: 0.85rem;">
+            Manage official bKash, Nagad, and other MFS account numbers displayed to customers during checkout.
+        </p>
+    </div>
+    <div>
+        <a href="/Admin/PaymentMethods/Create" class="btn btn-tech-gold btn-sm">
+            + Add Payment Method
+        </a>
+    </div>
+</div>
+
+<div class="card-tech p-4">
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table-tech">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Provider</th>
+                        <th>Display Name</th>
+                        <th>Account Number</th>
+                        <th>Instructions</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pm in Model)
+                    {
+                        <tr>
+                            <td><span class="text-secondary font-monospace">@pm.DisplayOrder</span></td>
+                            <td>
+                                <span class="badge @(pm.Name.ToLower().Contains("bkash") ? "bg-danger" : "bg-warning text-dark")">
+                                    @pm.Provider
+                                </span>
+                            </td>
+                            <td><strong class="text-white">@pm.Name</strong></td>
+                            <td>
+                                <span class="text-warning font-monospace" style="font-size: 1.1rem; font-weight: 700;">
+                                    @pm.AccountNumber
+                                </span>
+                            </td>
+                            <td class="text-secondary" style="font-size: 0.85rem; max-width: 250px;">
+                                @pm.Instructions
+                            </td>
+                            <td>
+                                <span class="badge @(pm.IsActive ? "bg-success" : "bg-secondary")">
+                                    @(pm.IsActive ? "Active" : "Disabled")
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-1">
+                                    <a href="/Admin/PaymentMethods/Edit/@pm.Id" class="btn btn-sm btn-outline-secondary">
+                                        Edit
+                                    </a>
+                                    <form asp-area="Admin" asp-controller="PaymentMethods" asp-action="ToggleActive" asp-route-id="@pm.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm @(pm.IsActive ? "btn-outline-warning" : "btn-outline-success")">
+                                            @(pm.IsActive ? "Disable" : "Enable")
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-4 text-secondary">
+            No payment methods configured.
+        </div>
+    }
+</div>

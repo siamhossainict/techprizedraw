@@ -1,0 +1,170 @@
+@model List<TechPrizeDraw.Models.Entities.Order>
+@{
+    ViewData["Title"] = "Pending Payment Verifications";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h1 class="text-white mb-1" style="font-size: 1.8rem;">Manual Payment Verification Desk</h1>
+        <p class="text-secondary mb-0" style="font-size: 0.85rem;">
+            Verify customer-submitted Transaction IDs with official bKash / Nagad statements. Tickets are generated sequentially upon approval.
+        </p>
+    </div>
+    <div>
+        <a href="/Admin/Exports/VerificationsCsv" class="btn btn-outline-info btn-sm">
+            Export Pending CSV
+        </a>
+    </div>
+</div>
+
+<div class="card-tech p-4">
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table-tech">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer Name</th>
+                        <th>Mobile</th>
+                        <th>Email</th>
+                        <th>Method</th>
+                        <th>Account #</th>
+                        <th>Transaction ID</th>
+                        <th>Amount</th>
+                        <th>Submitted At</th>
+                        <th>Reservation Hold</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        var remainingMin = Math.Max(0, (int)(order.ReservationExpiresAt - DateTime.UtcNow).TotalMinutes);
+                        <tr>
+                            <td><strong class="text-info font-monospace">@order.OrderNumber</strong></td>
+                            <td class="text-white">@order.Customer?.FullName</td>
+                            <td class="font-monospace text-secondary">@order.Customer?.MobileNumber</td>
+                            <td class="text-secondary" style="font-size: 0.8rem;">@order.Customer?.Email</td>
+                            <td>
+                                <span class="badge @(order.PaymentMethod?.Name.ToLower().Contains("bkash") == true ? "bg-danger" : "bg-warning text-dark")">
+                                    @order.PaymentMethod?.Name
+                                </span>
+                            </td>
+                            <td class="font-monospace text-secondary">@order.PaymentMethod?.AccountNumber</td>
+                            <td>
+                                <span class="text-warning font-monospace" style="font-weight: 700; font-size: 1rem;">
+                                    @order.TransactionId
+                                </span>
+                            </td>
+                            <td><strong class="text-white">৳@order.Amount.ToString("N0")</strong></td>
+                            <td class="text-secondary" style="font-size: 0.85rem;">@order.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>
+                                <span class="badge @(remainingMin < 15 ? "bg-danger" : "bg-dark border border-secondary text-secondary")">
+                                    @remainingMin min left
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-1">
+                                    <a href="/Admin/PaymentVerification/Details/@order.Id" class="btn btn-sm btn-outline-secondary">
+                                        Inspect
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#verifyApprove_@order.Id">
+                                        Approve
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#verifyReject_@order.Id">
+                                        Reject
+                                    </button>
+                                </div>
+
+                                <!-- Approve Modal -->
+                                <div class="modal fade" id="verifyApprove_@order.Id" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered text-start">
+                                        <div class="modal-content modal-content-tech">
+                                            <div class="modal-header modal-header-tech">
+                                                <h5 class="modal-title text-white">Confirm Payment Verification</h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form asp-area="Admin" asp-controller="PaymentVerification" asp-action="Approve" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="OrderId" value="@order.Id" />
+                                                <div class="modal-body p-4">
+                                                    <p class="text-secondary mb-3">
+                                                        Are you sure this payment has been independently verified against official statements?
+                                                    </p>
+                                                    <div class="p-3 rounded mb-3" style="background: var(--bg-surface-elevated); font-size: 0.85rem;">
+                                                        <div>Order: <strong class="text-info font-monospace">@order.OrderNumber</strong></div>
+                                                        <div>Customer: <strong class="text-white">@order.Customer?.FullName</strong> (@order.Customer?.MobileNumber)</div>
+                                                        <div>MFS Method: <strong class="text-white">@order.PaymentMethod?.Name</strong></div>
+                                                        <div>Transaction ID: <strong class="text-warning font-monospace" style="font-size: 1rem;">@order.TransactionId</strong></div>
+                                                        <div>Amount: <strong style="color: var(--accent-gold);">৳@order.Amount.ToString("N0") BDT</strong></div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label-tech">Admin Note (Audit Trail)</label>
+                                                        <input type="text" name="AdminNote" class="form-control form-tech w-100" placeholder="e.g. Confirmed on merchant portal" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer modal-footer-tech">
+                                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-success btn-sm px-3">
+                                                        ✓ Approve & Issue Ticket
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Reject Modal -->
+                                <div class="modal fade" id="verifyReject_@order.Id" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered text-start">
+                                        <div class="modal-content modal-content-tech">
+                                            <div class="modal-header modal-header-tech">
+                                                <h5 class="modal-title text-danger">Reject Order Payment</h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form asp-area="Admin" asp-controller="PaymentVerification" asp-action="Reject" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="OrderId" value="@order.Id" />
+                                                <div class="modal-body p-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label-tech">Select Rejection Reason *</label>
+                                                        <select name="Reason" class="form-select form-tech" required>
+                                                            <option value="Invalid Transaction ID">Invalid Transaction ID (TrxID not found)</option>
+                                                            <option value="Payment Not Received">Payment Not Received on Statement</option>
+                                                            <option value="Incorrect Amount Transferred">Incorrect Amount (Not ৳50)</option>
+                                                            <option value="Duplicate Transaction ID">Duplicate Transaction ID</option>
+                                                            <option value="Other">Other</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label-tech">Admin Reason Note</label>
+                                                        <textarea name="AdminNote" class="form-control form-tech w-100" rows="2" placeholder="Explain reason for rejection record."></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer modal-footer-tech">
+                                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        Reject Payment
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5 text-secondary">
+            <span style="font-size: 2.5rem;">🎉</span>
+            <h4 class="text-white mt-2">Zero Pending Verifications</h4>
+            <p class="mb-0">All submitted orders have been reviewed.</p>
+        </div>
+    }
+</div>
